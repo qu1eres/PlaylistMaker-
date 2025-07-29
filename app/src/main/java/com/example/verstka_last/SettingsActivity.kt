@@ -1,6 +1,7 @@
 package com.example.verstka_last
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,5 +24,55 @@ class SettingsActivity : AppCompatActivity() {
         buttonSettings.setOnClickListener {
             finish()
         }
+        val shareButton = findViewById<MaterialButton>(R.id.button_share)
+        shareButton.setOnClickListener {
+            shareApp()
+        }
+
+        val supportButton = findViewById<MaterialButton>(R.id.button_support)
+        supportButton.setOnClickListener {
+            contactSupport()
+        }
+
+        val agreementButton = findViewById<MaterialButton>(R.id.button_agreement)
+        agreementButton.setOnClickListener {
+            openAgreement()
+        }
+    }
+
+    private fun shareApp() {
+        val shareText = getString(
+            R.string.share_message,
+            getString(R.string.share_link)
+        )
+
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
+    }
+
+    private fun contactSupport() {
+        val email = getString(R.string.support_email)
+        val subject = getString(R.string.support_subject)
+        val body = getString(R.string.support_body)
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+        startActivity(intent)
+    }
+
+    private fun openAgreement() {
+        val agreementUrl = getString(R.string.agreement_link)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
+        startActivity(intent)
     }
 }
