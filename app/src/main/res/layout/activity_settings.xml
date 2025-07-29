@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="@string/button_settings_sharing"
             app:icon="@drawable/sharing"
-            app:iconPadding="128dp" />
+             />
 
         <com.google.android.material.button.MaterialButton
             style="@style/SettingsActivityStyle"
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:text="@string/button_settings_support"
             app:icon="@drawable/support"
-            app:iconPadding="152dp" />
+             />
 
         <com.google.android.material.button.MaterialButton
             style="@style/SettingsActivityStyle"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="@string/button_settings_user_agreement"
             app:icon="@drawable/user_agreement"
-            app:iconPadding="93dp" />
+             />
     </LinearLayout>
 
 </LinearLayout>

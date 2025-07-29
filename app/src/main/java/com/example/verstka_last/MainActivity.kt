@@ -18,24 +18,23 @@ class MainActivity : AppCompatActivity() {
         val searchIntent = Intent(this, SearchActivity::class.java)
         val settingsIntent = Intent(this, SettingsActivity::class.java)
 
-        val buttonClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                when (v?.id) {
-                    R.id.main_menu_search -> {
-                        startActivity(searchIntent)
-                    }
-                    R.id.main_menu_settings -> {
-                        startActivity(settingsIntent)
-                    }
+        val buttonClickListener = View.OnClickListener { v ->
+            when (v?.id) {
+                R.id.main_menu_search -> {
+                    startActivity(searchIntent)
+                }
+
+                R.id.main_menu_settings -> {
+                    startActivity(settingsIntent)
+                }
+                R.id.main_menu_media -> {
+                    startActivity(mediaIntent)
                 }
             }
         }
 
-        buttonMedia.setOnClickListener {
-            startActivity(mediaIntent)
-        }
-
         buttonSearch.setOnClickListener(buttonClickListener)
         buttonSettings.setOnClickListener(buttonClickListener)
+        buttonMedia.setOnClickListener(buttonClickListener)
     }
 }
