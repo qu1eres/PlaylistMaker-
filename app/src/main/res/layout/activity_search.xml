@@ -60,7 +60,7 @@
             android:paddingStart="12dp"
             android:paddingEnd="40dp"
             android:singleLine="true"
-            android:textColor="?attr/settingsTextColor"
+            android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:textSize="@dimen/settings_button_text"
             tools:ignore="TouchTargetSizeCheck" />
