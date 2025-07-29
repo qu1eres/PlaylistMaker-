@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonMainActivityStyle">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:layout_marginBottom">13dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/button_background</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8sp</item>
+    </style>
+    <style name="SettingsActivityStyle">
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_weight">0.25</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/button_background</item>
+        <item name="iconGravity">textEnd</item>
+    </style>
+</resources>

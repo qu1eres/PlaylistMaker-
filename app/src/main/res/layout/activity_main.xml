@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/blue"
+    android:padding="@dimen/fab_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/heading_text" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/ButtonMainActivityStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_search"
+            android:id="@+id/main_menu_search"
+            app:icon="@drawable/search" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/ButtonMainActivityStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_media"
+            android:id="@+id/main_menu_media"
+            app:icon="@drawable/media" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/ButtonMainActivityStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_settings"
+            android:id="@+id/main_menu_settings"
+            app:icon="@drawable/settings" />
+    </LinearLayout>
+
+</LinearLayout>
