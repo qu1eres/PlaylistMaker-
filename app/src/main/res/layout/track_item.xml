@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:paddingVertical="8dp">
+
+    <ImageView
+        android:id="@+id/track_cover"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/track_cover_background"/>
+
+    <TextView
+        android:id="@+id/track_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingEnd="40dp"
+        android:fontFamily="@font/ys_display_regular"
+        android:textColor="?attr/settingsTextColor"
+        app:layout_constraintStart_toEndOf="@id/track_cover"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/track_cover"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingEnd="40dp"
+        app:layout_constraintStart_toStartOf="@id/track_name"
+        app:layout_constraintEnd_toEndOf="@id/track_name"
+        app:layout_constraintTop_toBottomOf="@id/track_name"
+        app:layout_constraintBottom_toBottomOf="@id/track_cover"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/ys_display_regular"
+            android:textColor="?attr/settingsTextColor"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="•"
+            android:textColor="?attr/settingsTextColor"
+            android:paddingHorizontal="5dp"/>
+
+        <TextView
+            android:id="@+id/track_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_display_regular"
+            android:textColor="?attr/settingsTextColor"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/arrow_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_arrow_forward"
+        app:tint="?attr/settingsIconBackColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
