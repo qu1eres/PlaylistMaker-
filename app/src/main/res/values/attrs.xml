@@ -5,4 +5,5 @@
     <attr name="settingsBackgroundColor" format="color" />
     <attr name="mainActivityBackgroundColor" format="color" />
     <attr name="settingsIconTint" format="color" />
+    <attr name="searchIconTint" format="color" />
 </resources>

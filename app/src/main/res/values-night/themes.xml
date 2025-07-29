@@ -9,6 +9,7 @@
         <item name="settingsIconBackColor">@color/white</item>
         <item name="settingsBackgroundColor">@color/black</item>
         <item name="settingsIconTint">@color/white</item>
+        <item name="searchIconTint">@color/black</item>
     </style>
     <style name="Theme.Verstka_last.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/black</item>
