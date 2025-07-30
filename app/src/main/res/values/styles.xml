@@ -30,4 +30,31 @@
         <item name="elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
+
+    <style name="TrackName">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ArtistName">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="TrackDuration">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+    </style>
+
+    <style name="ArrowIcon">
+        <item name="android:src">@drawable/ic_arrow_forward</item>
+        <item name="tint">?attr/settingsIconBackColor</item>
+    </style>
 </resources>
