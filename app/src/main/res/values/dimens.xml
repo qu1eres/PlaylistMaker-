@@ -6,4 +6,22 @@
     <dimen name="heading_text">22sp</dimen>
     <dimen name="settings_button_text">16sp</dimen>
     <dimen name="main_menu_icon_padding">8sp</dimen>
+
+    <dimen name="track_item_height">61dp</dimen>
+    <dimen name="track_cover_size">45dp</dimen>
+    <dimen name="arrow_icon_size">24dp</dimen>
+
+    <dimen name="track_vertical_padding">8dp</dimen>
+    <dimen name="track_name_margin_start">12dp</dimen>
+    <dimen name="track_name_margin_top">6dp</dimen>
+    <dimen name="info_layout_margin_bottom">6dp</dimen>
+    <dimen name="divider_padding_horizontal">5dp</dimen>
+    <dimen name="arrow_icon_margin_start">8dp</dimen>
+
+    <dimen name="track_name_padding_end">40dp</dimen>
+    <dimen name="info_layout_padding_end">40dp</dimen>
+
+    <dimen name="track_name_text_size">16sp</dimen>
+    <dimen name="artist_name_text_size">11sp</dimen>
+    <dimen name="duration_text_size">11sp</dimen>
 </resources>
