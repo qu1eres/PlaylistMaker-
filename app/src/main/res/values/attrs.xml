@@ -6,4 +6,6 @@
     <attr name="mainActivityBackgroundColor" format="color" />
     <attr name="settingsIconTint" format="color" />
     <attr name="searchIconTint" format="color" />
+    <attr name="searchButtonUpdateTint" format="color" />
+    <attr name="searchButtonUpdateTextColor" format="color" />
 </resources>

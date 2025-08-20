@@ -78,14 +78,92 @@
 
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tracks_recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="24dp"
-        android:paddingHorizontal="16dp"
-        android:clipToPadding="false"
-        android:overScrollMode="never"/>
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tracks_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            android:paddingHorizontal="16dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:layout_marginTop="102dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_search_failed"
+                android:contentDescription="@string/nothing_found" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nothing_found"
+                android:textSize="19sp"
+                android:layout_marginTop="16dp"
+                android:textColor="?attr/settingsTextColor"
+                android:fontFamily="@font/ys_display_medium"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/error_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:layout_marginTop="102dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_connection_error"
+                android:contentDescription="@string/connection_problems" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connection_problems"
+                android:textSize="19sp"
+                android:layout_marginTop="16dp"
+                android:textColor="?attr/settingsTextColor"
+                android:fontFamily="@font/ys_display_medium"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/load_failed_check_connection"
+                android:textSize="19sp"
+                android:layout_marginTop="24dp"
+                android:textColor="?attr/settingsTextColor"
+                android:fontFamily="@font/ys_display_regular"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/retry_button"
+                style="@style/ButtonSearchUpdate"
+                android:text="@string/retry"
+                android:paddingHorizontal="0dp"
+                android:paddingVertical="8dp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
