@@ -9,28 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val trackName: TextView = itemView.findViewById(R.id.track_name)
-    private val artistName: TextView = itemView.findViewById(R.id.artist_name)
-    private val trackDuration: TextView = itemView.findViewById(R.id.track_duration)
-    private val trackCover: ImageView = itemView.findViewById(R.id.track_cover)
-
-    fun bind(track: Track) {
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackDuration.text = track.trackTime
-
-        Glide.with(itemView.context)
-            .load(track.artworkUrl100)
-            .placeholder(R.drawable.ic_placeholder)
-            .transform(RoundedCorners(8))
-            .into(trackCover)
-    }
-}
-
 class TrackAdapter(
-    private val tracks: List<Track>
+    private var tracks: List<Track> = emptyList()
 ) : RecyclerView.Adapter<TrackViewHolder>() {
+
+    fun updateTracks(newTracks: List<Track>) {
+        tracks = newTracks
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -43,4 +29,28 @@ class TrackAdapter(
     }
 
     override fun getItemCount() = tracks.size
+}
+
+class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private val trackName: TextView = itemView.findViewById(R.id.track_name)
+    private val artistName: TextView = itemView.findViewById(R.id.artist_name)
+    private val trackDuration: TextView = itemView.findViewById(R.id.track_duration)
+    private val trackCover: ImageView = itemView.findViewById(R.id.track_cover)
+
+    fun bind(track: Track) {
+        trackName.text = track.title
+        artistName.text = track.artist
+        trackDuration.text = track.duration
+
+        if (track.artworkUrl.isNullOrEmpty()) {
+            trackCover.setImageResource(R.drawable.ic_placeholder)
+        } else {
+            Glide.with(itemView.context)
+                .load(track.artworkUrl)
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
+                .transform(RoundedCorners(8))
+                .into(trackCover)
+        }
+    }
 }

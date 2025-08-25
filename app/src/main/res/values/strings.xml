@@ -16,4 +16,8 @@
     <string name="agreement_link">https://yandex.ru/legal/practicum_offer/ru/</string>
     <string name="track_cover_description">Обложка трека</string>
     <string name="divider_dot">•</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="connection_problems">Проблемы со связью</string>
+    <string name="load_failed_check_connection">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="retry">Обновить</string>
 </resources>
