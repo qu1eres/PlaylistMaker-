@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -39,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var emptyState: View
     private lateinit var errorState: View
     private lateinit var retryButton: TextView
+    private lateinit var historyScrollView: NestedScrollView
 
     private lateinit var historyLayout: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
@@ -58,6 +60,7 @@ class SearchActivity : AppCompatActivity() {
         emptyState = findViewById(R.id.empty_state)
         errorState = findViewById(R.id.error_state)
         retryButton = findViewById(R.id.retry_button)
+        historyScrollView = findViewById(R.id.history_scroll_view)
 
         historyLayout = findViewById(R.id.history_layout)
         historyRecyclerView = findViewById(R.id.history_recycler_view)
@@ -135,14 +138,15 @@ class SearchActivity : AppCompatActivity() {
         val history = searchHistory.loadHistory()
 
         if (hasFocus && isEmpty && history.isNotEmpty()) {
-            historyLayout.visibility = View.VISIBLE
+            historyScrollView.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
             emptyState.visibility = View.GONE
             errorState.visibility = View.GONE
 
             historyAdapter.updateTracks(history)
         } else {
-            historyLayout.visibility = View.GONE
+
+            historyScrollView.visibility = View.GONE
         }
     }
 
