@@ -1,7 +1,6 @@
 package com.example.verstka_last
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -77,18 +76,10 @@ class SearchActivity : AppCompatActivity() {
 
         adapter.setOnItemClickListener { track ->
             searchHistory.saveTrack(track)
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("track", track)
-            }
-            startActivity(intent)
         }
 
         historyAdapter.setOnItemClickListener { track ->
             searchHistory.saveTrack(track)
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("track", track)
-            }
-            startActivity(intent)
         }
 
         backButton.setOnClickListener {

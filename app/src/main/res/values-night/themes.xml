@@ -12,9 +12,6 @@
         <item name="searchIconTint">@color/black</item>
         <item name="searchButtonUpdateTint">@color/white</item>
         <item name="searchButtonUpdateTextColor">@color/black</item>
-        <item name="playButtonIcon">@drawable/ic_button_play_night</item>
-        <item name="favoriteButtonIcon">@drawable/ic_button_add_favourits_night</item>
-        <item name="playlistButtonIcon">@drawable/ic_button_add_to_playlist_night</item>
     </style>
     <style name="Theme.Verstka_last.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/black</item>

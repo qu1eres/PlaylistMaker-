@@ -18,9 +18,6 @@
             android:name=".SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".PlayerActivity"
-            android:exported="false" />
-        <activity
             android:name=".SettingsActivity"
             android:exported="true" />
         <activity

@@ -22,7 +22,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/search_back_button"
-            android:padding="12dp" />
+            android:padding="12dp"
+            app:tint="?attr/settingsIconBackColor" />
 
         <TextView
             android:layout_width="wrap_content"

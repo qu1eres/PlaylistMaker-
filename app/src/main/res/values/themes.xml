@@ -21,9 +21,6 @@
         <item name="searchIconTint">@color/black</item>
         <item name="searchButtonUpdateTint">@color/black</item>
         <item name="searchButtonUpdateTextColor">@color/white</item>
-        <item name="playButtonIcon">@drawable/ic_button_play</item>
-        <item name="favoriteButtonIcon">@drawable/ic_button_add_favorits</item>
-        <item name="playlistButtonIcon">@drawable/ic_button_add_to_playlist</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

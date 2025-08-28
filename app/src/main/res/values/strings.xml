@@ -24,10 +24,4 @@
     <string name="unknown_artist">Unknown Artist</string>
     <string name="you_search">История поиска</string>
     <string name="clear_history">Очистить историю</string>
-    <string name="album_format">Альбом</string>
-    <string name="year_format">Год</string>
-    <string name="genre_format">Жанр</string>
-    <string name="country_format">Страна</string>
-    <string name="duration_format">Длительность</string>
-    <string name="currentPlayTime">00:32</string>
 </resources>
