@@ -69,4 +69,43 @@
         <item name="android:src">@drawable/ic_arrow_forward</item>
         <item name="tint">?attr/settingsIconBackColor</item>
     </style>
+    <style name="PlayerToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">?attr/settingsTextColor</item>
+        <item name="navigationIconTint">?attr/settingsIconBackColor</item>
+    </style>
+
+    <style name="PlayerTrackTitle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+    </style>
+
+    <style name="PlayerArtistName">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+    </style>
+
+    <style name="PlayerTimeText">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+    </style>
+
+    <style name="PlayerTrackDescription">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/yp_light_gray_v2</item>
+    </style>
+
+    <style name="PlayerTrackValue">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">?attr/settingsTextColor</item>
+    </style>
 </resources>
