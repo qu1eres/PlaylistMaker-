@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="12dp"
+        android:paddingTop="10dp"
         android:paddingStart="4dp"
         android:paddingEnd="12dp">
 
@@ -93,6 +93,47 @@
             android:overScrollMode="never"
             android:visibility="gone"/>
 
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/history_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/history_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="42dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/you_search"
+                    android:textSize="19sp"
+                    android:textColor="?attr/settingsTextColor"
+                    android:fontFamily="@font/ys_display_medium"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center_horizontal"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/history_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"/>
+
+                <Button
+                    style="@style/ButtonSearchUpdate"
+                    android:id="@+id/clear_history_button"
+                    android:text="@string/clear_history"
+                    android:layout_marginTop="24dp"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
         <LinearLayout
             android:id="@+id/empty_state"
             android:layout_width="match_parent"
@@ -150,17 +191,21 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/load_failed_check_connection"
-                android:textSize="19sp"
-                android:layout_marginTop="24dp"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"
                 android:textColor="?attr/settingsTextColor"
                 android:fontFamily="@font/ys_display_regular"/>
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/retry_button"
-                style="@style/ButtonSearchUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/retry"
-                android:paddingHorizontal="0dp"
-                android:paddingVertical="8dp" />
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"
+                android:padding="16dp"
+                android:textColor="?attr/settingsTextColor"
+                android:fontFamily="@font/ys_display_medium"/>
 
         </LinearLayout>
 

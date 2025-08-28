@@ -10,8 +10,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 class TrackAdapter(
-    private var tracks: List<Track> = emptyList()
+    private var tracks: List<Track> = emptyList(),
+    private var onItemClickListener: ((Track) -> Unit)? = null
 ) : RecyclerView.Adapter<TrackViewHolder>() {
+
+    fun setOnItemClickListener(listener: (Track) -> Unit) {
+        onItemClickListener = listener
+    }
 
     fun updateTracks(newTracks: List<Track>) {
         tracks = newTracks
@@ -26,6 +31,9 @@ class TrackAdapter(
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.invoke(tracks[position])
+        }
     }
 
     override fun getItemCount() = tracks.size
@@ -38,15 +46,16 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackCover: ImageView = itemView.findViewById(R.id.track_cover)
 
     fun bind(track: Track) {
-        trackName.text = track.title
-        artistName.text = track.artist
+        trackName.text = track.title.ifEmpty { itemView.context.getString(R.string.unknown_title) }
+        artistName.text = track.artist.ifEmpty { itemView.context.getString(R.string.unknown_artist) }
         trackDuration.text = track.duration
 
-        if (track.artworkUrl.isNullOrEmpty()) {
+        val artworkUrl = track.artworkUrl
+        if (artworkUrl.isNullOrEmpty()) {
             trackCover.setImageResource(R.drawable.ic_placeholder)
         } else {
             Glide.with(itemView.context)
-                .load(track.artworkUrl)
+                .load(artworkUrl)
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_placeholder)
                 .transform(RoundedCorners(8))

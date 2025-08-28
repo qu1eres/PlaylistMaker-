@@ -20,4 +20,8 @@
     <string name="connection_problems">Проблемы со связью</string>
     <string name="load_failed_check_connection">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="retry">Обновить</string>
+    <string name="unknown_title">Unknown Title</string>
+    <string name="unknown_artist">Unknown Artist</string>
+    <string name="you_search">История поиска</string>
+    <string name="clear_history">Очистить историю</string>
 </resources>
