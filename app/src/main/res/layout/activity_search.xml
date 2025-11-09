@@ -217,8 +217,8 @@
             android:visibility="gone">
 
             <ProgressBar
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="@dimen/progress_bar_dimens"
+                android:layout_height="@dimen/progress_bar_dimens"
                 android:indeterminateTint="@color/blue" />
 
         </LinearLayout>

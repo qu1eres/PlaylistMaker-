@@ -23,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
     private val updateTime = Runnable {
-        runnable()
+        updateProgress()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +52,7 @@ class PlayerActivity : AppCompatActivity() {
 
         play = findViewById(R.id.play)
         pause = findViewById(R.id.play_button_active)
-        currentPlayTime = findViewById(R.id.current_play_time); currentPlayTime.text = "00:00"
+        currentPlayTime = findViewById(R.id.current_play_time); currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
 
         fun preparePlayer() {
             mediaPlayer.setDataSource(track.previewUrl)
@@ -63,7 +63,7 @@ class PlayerActivity : AppCompatActivity() {
             }
             mediaPlayer.setOnCompletionListener {
                 playerState = STATE_PREPARED
-                handler.removeCallbacks(updateTime); currentPlayTime.text = "00:00"
+                handler.removeCallbacks(updateTime); currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
                 play.visibility = View.VISIBLE
                 pause.visibility = View.GONE
             }
@@ -147,9 +147,9 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun runnable() {
+    private fun updateProgress() {
         currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-        handler.postDelayed(updateTime, 500)
+        handler.postDelayed(updateTime, UPDATE_DELAY)
     }
 
     override fun onPause() {
@@ -170,6 +170,8 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+
+        private const val UPDATE_DELAY: Long = 500
     }
 
     private var playerState = STATE_DEFAULT

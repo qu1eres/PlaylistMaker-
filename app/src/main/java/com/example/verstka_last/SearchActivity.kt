@@ -255,6 +255,11 @@ class SearchActivity : AppCompatActivity() {
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
+    }
+
     companion object {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L; private const val CLICK_DEBOUNCE_DELAY = 1000L
