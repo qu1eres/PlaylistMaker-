@@ -9,6 +9,7 @@
     <attr name="searchButtonUpdateTint" format="color" />
     <attr name="searchButtonUpdateTextColor" format="color" />
     <attr name="playButtonIcon" format="reference" />
+    <attr name="playButtonActiveIcon" format="reference" />
     <attr name="favoriteButtonIcon" format="reference" />
     <attr name="playlistButtonIcon" format="reference" />
 </resources>

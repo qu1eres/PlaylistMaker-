@@ -88,6 +88,32 @@
             app:layout_constraintTop_toBottomOf="@+id/track_name"
             tools:text="pyrokinesis" />
 
+        <FrameLayout
+            android:id="@+id/play_pause_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toStartOf="@+id/favourite"
+            app:layout_constraintStart_toEndOf="@+id/playlist"
+            app:layout_constraintTop_toBottomOf="@+id/artist_name">
+
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="?attr/playButtonIcon"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:id="@+id/play_button_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="?attr/playButtonActiveIcon"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
         <ImageView
             android:id="@+id/playlist"
             android:layout_width="wrap_content"
@@ -95,16 +121,6 @@
             android:layout_marginTop="54dp"
             android:src="?attr/playlistButtonIcon"
             app:layout_constraintStart_toStartOf="@id/second_left_border"
-            app:layout_constraintTop_toBottomOf="@+id/artist_name" />
-
-        <ImageView
-            android:id="@+id/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:src="?attr/playButtonIcon"
-            app:layout_constraintEnd_toStartOf="@+id/favourite"
-            app:layout_constraintStart_toEndOf="@+id/playlist"
             app:layout_constraintTop_toBottomOf="@+id/artist_name" />
 
         <ImageView
@@ -125,7 +141,7 @@
             android:text="@string/currentPlayTime"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/play" />
+            app:layout_constraintTop_toBottomOf="@+id/play_pause_container" />
 
         <TextView
             android:id="@+id/track_duration_text"

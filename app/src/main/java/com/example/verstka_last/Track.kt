@@ -13,7 +13,8 @@ data class Track(
     val collectionName: String?,
     val releaseDate: String?,
     val primaryGenreName: String,
-    val country: String
+    val country: String,
+    val previewUrl: String
 ) : Serializable {
 
     fun getReleaseYear(): String? {
@@ -39,6 +40,7 @@ fun ITunesTrack.toTrack(): Track {
         collectionName = collectionName,
         releaseDate = releaseDate,
         primaryGenreName = primaryGenreName ?: "",
-        country = country ?: ""
+        country = country ?: "",
+        previewUrl = previewUrl ?: ""
     )
 }

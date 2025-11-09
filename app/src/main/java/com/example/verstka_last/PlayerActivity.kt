@@ -1,6 +1,9 @@
 package com.example.verstka_last
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -8,8 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
+
+    private lateinit var play: ImageView
+    private lateinit var pause: ImageView
+    private lateinit var currentPlayTime: TextView
+
+    private var mediaPlayer = MediaPlayer()
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateTime = Runnable {
+        runnable()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +49,27 @@ class PlayerActivity : AppCompatActivity() {
         val genreName: TextView = findViewById(R.id.genre_name)
         val country: TextView = findViewById(R.id.country)
         val trackDuration: TextView = findViewById(R.id.track_duration)
-        val currentPlayTime: TextView = findViewById(R.id.current_play_time)
+
+        play = findViewById(R.id.play)
+        pause = findViewById(R.id.play_button_active)
+        currentPlayTime = findViewById(R.id.current_play_time); currentPlayTime.text = "00:00"
+
+        fun preparePlayer() {
+            mediaPlayer.setDataSource(track.previewUrl)
+            mediaPlayer.prepareAsync()
+            mediaPlayer.setOnPreparedListener {
+                play.isEnabled = true
+                playerState = STATE_PREPARED
+            }
+            mediaPlayer.setOnCompletionListener {
+                playerState = STATE_PREPARED
+                handler.removeCallbacks(updateTime); currentPlayTime.text = "00:00"
+                play.visibility = View.VISIBLE
+                pause.visibility = View.GONE
+            }
+        }
+
+        preparePlayer()
 
         toolBar.setNavigationOnClickListener {
             finish()
@@ -76,6 +111,66 @@ class PlayerActivity : AppCompatActivity() {
             trackImage.setImageResource(R.drawable.ic_album_placeholder)
         }
 
-        currentPlayTime.text = "00:00"
+        play.setOnClickListener {
+            playbackControl()
+        }
+
+        pause.setOnClickListener { playbackControl() }
+
     }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        pause.visibility = View.VISIBLE
+        play.visibility = View.GONE
+        playerState = STATE_PLAYING
+        handler.post(updateTime)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        play.visibility = View.VISIBLE
+        pause.visibility = View.GONE
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(updateTime)
+
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    private fun runnable() {
+        currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+        handler.postDelayed(updateTime, 500)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(updateTime)
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(updateTime)
+        mediaPlayer.release()
+    }
+
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
+
+    private var playerState = STATE_DEFAULT
 }
