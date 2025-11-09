@@ -3,6 +3,8 @@ package com.example.verstka_last
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -24,12 +26,16 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class SearchActivity : AppCompatActivity() {
 
     private val iTunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder().baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create()).build()
     private val iTunesService = retrofit.create(iTunesAPI::class.java)
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch() }
+    private var isClickAllowed = true
     private lateinit var searchHistory: SearchHistory
 
     private var currentSearchText: String = ""
@@ -42,6 +48,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorState: View
     private lateinit var retryButton: TextView
     private lateinit var historyScrollView: NestedScrollView
+    private lateinit var progressBar: LinearLayout
 
     private lateinit var historyLayout: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
@@ -62,6 +69,7 @@ class SearchActivity : AppCompatActivity() {
         errorState = findViewById(R.id.error_state)
         retryButton = findViewById(R.id.retry_button)
         historyScrollView = findViewById(R.id.history_scroll_view)
+        progressBar = findViewById(R.id.progress_bar)
 
         historyLayout = findViewById(R.id.history_layout)
         historyRecyclerView = findViewById(R.id.history_recycler_view)
@@ -77,18 +85,22 @@ class SearchActivity : AppCompatActivity() {
 
         adapter.setOnItemClickListener { track ->
             searchHistory.saveTrack(track)
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("track", track)
+            if (clickDebounce()) {
+                val intent = Intent(this, PlayerActivity::class.java).apply {
+                    putExtra("track", track)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
 
         historyAdapter.setOnItemClickListener { track ->
             searchHistory.saveTrack(track)
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("track", track)
+            if(clickDebounce()) {
+                val intent = Intent(this, PlayerActivity::class.java).apply {
+                    putExtra("track", track)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
 
         backButton.setOnClickListener {
@@ -123,6 +135,7 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = clearButtonVisibility(s)
                 currentSearchText = s.toString()
                 updateHistoryVisibility()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -147,10 +160,7 @@ class SearchActivity : AppCompatActivity() {
         val history = searchHistory.loadHistory()
 
         if (hasFocus && isEmpty && history.isNotEmpty()) {
-            historyScrollView.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-            emptyState.visibility = View.GONE
-            errorState.visibility = View.GONE
+            historyScrollView.visibility = View.VISIBLE; recyclerView.visibility = View.GONE; emptyState.visibility = View.GONE; errorState.visibility = View.GONE
 
             historyAdapter.updateTracks(history)
         } else {
@@ -166,13 +176,11 @@ class SearchActivity : AppCompatActivity() {
             return
         }
 
-        recyclerView.isVisible = false
-        emptyState.isVisible = false
-        errorState.isVisible = false
-        historyLayout.isVisible = false
+        recyclerView.isVisible = false; emptyState.isVisible = false; errorState.isVisible = false; historyLayout.isVisible = false; progressBar.visibility = View.VISIBLE
 
         iTunesService.search(query).enqueue(object : Callback<ITunesSearchResponse> {
             override fun onResponse(call: Call<ITunesSearchResponse>, response: Response<ITunesSearchResponse>) {
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val tracks = response.body()?.results?.map { it.toTrack() } ?: emptyList()
                     if (tracks.isEmpty()) {
@@ -186,38 +194,41 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ITunesSearchResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 showErrorState()
             }
         })
     }
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
 
     private fun showInitialState() {
-        recyclerView.isVisible = false
-        emptyState.isVisible = false
-        errorState.isVisible = false
+        recyclerView.isVisible = false; emptyState.isVisible = false; errorState.isVisible = false
         updateHistoryVisibility()
     }
 
     private fun showResults(tracks: List<Track>) {
         adapter.updateTracks(tracks)
-        recyclerView.isVisible = true
-        emptyState.isVisible = false
-        errorState.isVisible = false
-        historyLayout.isVisible = false
+        recyclerView.isVisible = true; emptyState.isVisible = false; errorState.isVisible = false; historyLayout.isVisible = false
     }
 
     private fun showEmptyState() {
-        recyclerView.isVisible = false
-        emptyState.isVisible = true
-        errorState.isVisible = false
-        historyLayout.isVisible = false
+        emptyState.isVisible = true; recyclerView.isVisible = false; errorState.isVisible = false; historyLayout.isVisible = false
     }
 
     private fun showErrorState() {
-        recyclerView.isVisible = false
-        emptyState.isVisible = false
-        errorState.isVisible = true
-        historyLayout.isVisible = false
+        errorState.isVisible = true; historyLayout.isVisible = false; recyclerView.isVisible = false; emptyState.isVisible = false
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -244,7 +255,13 @@ class SearchActivity : AppCompatActivity() {
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
+    }
+
     companion object {
         private const val SEARCH_TEXT_KEY = "SEARCH_TEXT"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L; private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

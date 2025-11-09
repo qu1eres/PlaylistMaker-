@@ -208,6 +208,21 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="102dp"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="@dimen/progress_bar_dimens"
+                android:layout_height="@dimen/progress_bar_dimens"
+                android:indeterminateTint="@color/blue" />
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </LinearLayout>

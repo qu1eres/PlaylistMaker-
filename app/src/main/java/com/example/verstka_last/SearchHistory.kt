@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import androidx.core.content.edit
 
 class SearchHistory(private val context: Context) {
     private val sharedPreferences: SharedPreferences =
@@ -21,7 +22,7 @@ class SearchHistory(private val context: Context) {
         val limitedHistory = if (history.size > 10) history.subList(0, 10) else history
 
         val json = gson.toJson(limitedHistory)
-        sharedPreferences.edit().putString(key, json).apply()
+        sharedPreferences.edit { putString(key, json) }
     }
 
     fun loadHistory(): List<Track> {
@@ -35,6 +36,6 @@ class SearchHistory(private val context: Context) {
     }
 
     fun clearHistory() {
-        sharedPreferences.edit().remove(key).apply()
+        sharedPreferences.edit { remove(key) }
     }
 }

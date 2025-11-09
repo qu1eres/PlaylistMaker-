@@ -3,6 +3,7 @@ package com.example.verstka_last
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class App : Application() {
 
@@ -18,7 +19,7 @@ class App : Application() {
 
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-        sharedPreferences.edit().putBoolean("dark_theme", darkThemeEnabled).apply()
+        sharedPreferences.edit { putBoolean("dark_theme", darkThemeEnabled) }
         applyTheme(darkThemeEnabled)
     }
 

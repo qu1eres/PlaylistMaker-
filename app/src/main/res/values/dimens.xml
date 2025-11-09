@@ -24,4 +24,6 @@
     <dimen name="track_name_text_size">16sp</dimen>
     <dimen name="artist_name_text_size">11sp</dimen>
     <dimen name="duration_text_size">11sp</dimen>
+
+    <dimen name="progress_bar_dimens">44dp</dimen>
 </resources>
