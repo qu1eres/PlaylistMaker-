@@ -1,9 +1,13 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.ui.mainmenu
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.verstka_last.R
+import com.example.verstka_last.SettingsActivity
+import com.example.verstka_last.presentation.ui.library.MediaLibraryActivity
+import com.example.verstka_last.presentation.ui.search.SearchActivity
 import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {

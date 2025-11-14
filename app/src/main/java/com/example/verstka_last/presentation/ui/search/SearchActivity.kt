@@ -1,6 +1,5 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.ui.search
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -20,18 +19,25 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.verstka_last.presentation.ui.mediaplayer.PlayerActivity
+import com.example.verstka_last.R
+import com.example.verstka_last.SearchHistory
+import com.example.verstka_last.TrackAdapter
+import com.example.verstka_last.data.dto.ITunesSearchResponse
+import com.example.verstka_last.data.dto.toDomain
+import com.example.verstka_last.data.network.iTunesAPI
+import com.example.verstka_last.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
+import retrofit2.converter.gson.GsonConverterFactory.*
 
 class SearchActivity : AppCompatActivity() {
 
     private val iTunesBaseUrl = "https://itunes.apple.com"
     private val retrofit = Retrofit.Builder().baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create()).build()
+        .addConverterFactory(create()).build()
     private val iTunesService = retrofit.create(iTunesAPI::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
@@ -182,7 +188,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ITunesSearchResponse>, response: Response<ITunesSearchResponse>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
-                    val tracks = response.body()?.results?.map { it.toTrack() } ?: emptyList()
+                    val tracks = response.body()?.results?.map { it.toDomain() } ?: emptyList()
                     if (tracks.isEmpty()) {
                         showEmptyState()
                     } else {
@@ -251,7 +257,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 

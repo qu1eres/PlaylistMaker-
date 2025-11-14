@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.verstka_last.domain.models.Track
 
 class TrackAdapter(
     private var tracks: List<Track> = emptyList(),

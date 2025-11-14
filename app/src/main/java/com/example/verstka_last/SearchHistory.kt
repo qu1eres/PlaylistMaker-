@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import androidx.core.content.edit
+import com.example.verstka_last.domain.models.Track
 
 class SearchHistory(private val context: Context) {
     private val sharedPreferences: SharedPreferences =
