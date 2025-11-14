@@ -1,4 +1,6 @@
 package com.example.verstka_last.domain.api
 
-class ThemeInteractor {
+interface ThemeInteractor {
+    fun toggleTheme()
+    fun isDarkTheme(): Boolean
 }

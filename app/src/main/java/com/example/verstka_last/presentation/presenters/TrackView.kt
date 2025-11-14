@@ -1,4 +1,4 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.presenters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.verstka_last.R
 import com.example.verstka_last.domain.models.Track
 
 class TrackAdapter(

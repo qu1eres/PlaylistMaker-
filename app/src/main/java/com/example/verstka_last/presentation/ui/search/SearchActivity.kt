@@ -21,27 +21,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verstka_last.presentation.ui.mediaplayer.PlayerActivity
 import com.example.verstka_last.R
-import com.example.verstka_last.SearchHistory
-import com.example.verstka_last.TrackAdapter
-import com.example.verstka_last.data.dto.ITunesSearchResponse
-import com.example.verstka_last.data.dto.toDomain
-import com.example.verstka_last.data.network.iTunesAPI
+import com.example.verstka_last.data.local.SearchHistory
+import com.example.verstka_last.presentation.presenters.TrackAdapter
+import com.example.verstka_last.domain.Creator
+import com.example.verstka_last.domain.api.TracksInteractor
 import com.example.verstka_last.domain.models.Track
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory.*
 
 class SearchActivity : AppCompatActivity() {
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder().baseUrl(iTunesBaseUrl)
-        .addConverterFactory(create()).build()
-    private val iTunesService = retrofit.create(iTunesAPI::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
     private var isClickAllowed = true
+    private var interactor: TracksInteractor = Creator.provideTracksInteractor()
     private lateinit var searchHistory: SearchHistory
 
     private var currentSearchText: String = ""
@@ -183,27 +174,27 @@ class SearchActivity : AppCompatActivity() {
         }
 
         recyclerView.isVisible = false; emptyState.isVisible = false; errorState.isVisible = false; historyLayout.isVisible = false; progressBar.visibility = View.VISIBLE
-
-        iTunesService.search(query).enqueue(object : Callback<ITunesSearchResponse> {
-            override fun onResponse(call: Call<ITunesSearchResponse>, response: Response<ITunesSearchResponse>) {
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val tracks = response.body()?.results?.map { it.toDomain() } ?: emptyList()
-                    if (tracks.isEmpty()) {
+        interactor.searchTracks(query, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>) {
+                runOnUiThread {
+                    progressBar.visibility = View.GONE
+                    if (foundTracks.isEmpty()) {
                         showEmptyState()
                     } else {
-                        showResults(tracks)
+                        showResults(foundTracks)
                     }
-                } else {
-                    showErrorState()
                 }
             }
-
-            override fun onFailure(call: Call<ITunesSearchResponse>, t: Throwable) {
+            /*override fun onFailure(call: Call<ITunesSearchResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
                 showErrorState()
-            }
+            }*/ // Я не стал добавлять обработку ошибок, т.к. в предидущем уроке было написано "Очень верное замечание!
+                // Это вопрос обработки ошибок в чистой архитектуре.
+                //Для этого существует достаточно простое и удобное решение, о котором мы поговорим в следующем спринте.
+                // Пока будем считать, что нам не нужно обрабатывать ошибки каким-то особым образом."
+                // Т.к. достаточно простое и удобное решение мне будет предоставлено в след. спринте, я в данный момент отказался от обработки ошибок.
         })
+
     }
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)

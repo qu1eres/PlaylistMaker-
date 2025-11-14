@@ -8,7 +8,6 @@ import com.example.verstka_last.domain.api.TrackRepository
 import com.example.verstka_last.domain.models.Track
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
-
     override fun searchTrack(expression: String): List<Track> {
         val response = networkClient.doRequest(TrackRequest(expression))
         if (response.resultCode == 200) {
