@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verstka_last.presentation.ui.mediaplayer.PlayerActivity
 import com.example.verstka_last.R
-import com.example.verstka_last.data.local.SearchHistory
 import com.example.verstka_last.presentation.presenters.TrackAdapter
 import com.example.verstka_last.domain.Creator
+import com.example.verstka_last.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.domain.api.TracksInteractor
 import com.example.verstka_last.domain.models.Track
 
@@ -33,7 +33,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchRunnable = Runnable { performSearch() }
     private var isClickAllowed = true
     private var interactor: TracksInteractor = Creator.provideTracksInteractor()
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistoryInteractor: SearchHistoryInteractor
 
     private var currentSearchText: String = ""
     private lateinit var inputEditText: EditText
@@ -56,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        searchHistory = SearchHistory(this)
+        searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
 
         inputEditText = findViewById(R.id.input_edit_text)
         clearButton = findViewById(R.id.clear_icon)
@@ -81,7 +81,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView.adapter = historyAdapter
 
         adapter.setOnItemClickListener { track ->
-            searchHistory.saveTrack(track)
+            searchHistoryInteractor.saveTrack(track)
             if (clickDebounce()) {
                 val intent = Intent(this, PlayerActivity::class.java).apply {
                     putExtra("track", track)
@@ -91,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         historyAdapter.setOnItemClickListener { track ->
-            searchHistory.saveTrack(track)
+            searchHistoryInteractor.saveTrack(track)
             if(clickDebounce()) {
                 val intent = Intent(this, PlayerActivity::class.java).apply {
                     putExtra("track", track)
@@ -112,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistoryButton.setOnClickListener {
-            searchHistory.clearHistory()
+            searchHistoryInteractor.clearHistory()
             updateHistoryVisibility()
         }
 
@@ -154,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
     private fun updateHistoryVisibility() {
         val hasFocus = inputEditText.hasFocus()
         val isEmpty = inputEditText.text.isEmpty()
-        val history = searchHistory.loadHistory()
+        val history = searchHistoryInteractor.loadHistory()
 
         if (hasFocus && isEmpty && history.isNotEmpty()) {
             historyScrollView.visibility = View.VISIBLE; recyclerView.visibility = View.GONE; emptyState.visibility = View.GONE; errorState.visibility = View.GONE

@@ -21,7 +21,7 @@
             android:name=".presentation.ui.mediaplayer.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".presentation.ui.settings.SettingsActivity"
             android:exported="true" />
         <activity
             android:name=".presentation.ui.library.MediaLibraryActivity"
