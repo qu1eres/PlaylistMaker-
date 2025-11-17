@@ -1,4 +1,4 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.ui.mediaplayer
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.verstka_last.R
+import com.example.verstka_last.domain.api.TrackRepository
+import com.example.verstka_last.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -52,7 +55,10 @@ class PlayerActivity : AppCompatActivity() {
 
         play = findViewById(R.id.play)
         pause = findViewById(R.id.play_button_active)
-        currentPlayTime = findViewById(R.id.current_play_time); currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+        currentPlayTime = findViewById(R.id.current_play_time); currentPlayTime.text = SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        ).format(0)
 
         fun preparePlayer() {
             mediaPlayer.setDataSource(track.previewUrl)
@@ -63,7 +69,10 @@ class PlayerActivity : AppCompatActivity() {
             }
             mediaPlayer.setOnCompletionListener {
                 playerState = STATE_PREPARED
-                handler.removeCallbacks(updateTime); currentPlayTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(0)
+                handler.removeCallbacks(updateTime); currentPlayTime.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(0)
                 play.visibility = View.VISIBLE
                 pause.visibility = View.GONE
             }

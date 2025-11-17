@@ -1,6 +1,5 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.ui.search
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -20,23 +19,21 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
+import com.example.verstka_last.presentation.ui.mediaplayer.PlayerActivity
+import com.example.verstka_last.R
+import com.example.verstka_last.presentation.presenters.TrackAdapter
+import com.example.verstka_last.domain.Creator
+import com.example.verstka_last.domain.api.SearchHistoryInteractor
+import com.example.verstka_last.domain.api.TracksInteractor
+import com.example.verstka_last.domain.models.Track
 
 class SearchActivity : AppCompatActivity() {
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder().baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create()).build()
-    private val iTunesService = retrofit.create(iTunesAPI::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch() }
     private var isClickAllowed = true
-    private lateinit var searchHistory: SearchHistory
+    private var interactor: TracksInteractor = Creator.provideTracksInteractor()
+    private lateinit var searchHistoryInteractor: SearchHistoryInteractor
 
     private var currentSearchText: String = ""
     private lateinit var inputEditText: EditText
@@ -59,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        searchHistory = SearchHistory(this)
+        searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
 
         inputEditText = findViewById(R.id.input_edit_text)
         clearButton = findViewById(R.id.clear_icon)
@@ -84,7 +81,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView.adapter = historyAdapter
 
         adapter.setOnItemClickListener { track ->
-            searchHistory.saveTrack(track)
+            searchHistoryInteractor.saveTrack(track)
             if (clickDebounce()) {
                 val intent = Intent(this, PlayerActivity::class.java).apply {
                     putExtra("track", track)
@@ -94,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         historyAdapter.setOnItemClickListener { track ->
-            searchHistory.saveTrack(track)
+            searchHistoryInteractor.saveTrack(track)
             if(clickDebounce()) {
                 val intent = Intent(this, PlayerActivity::class.java).apply {
                     putExtra("track", track)
@@ -115,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistoryButton.setOnClickListener {
-            searchHistory.clearHistory()
+            searchHistoryInteractor.clearHistory()
             updateHistoryVisibility()
         }
 
@@ -157,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
     private fun updateHistoryVisibility() {
         val hasFocus = inputEditText.hasFocus()
         val isEmpty = inputEditText.text.isEmpty()
-        val history = searchHistory.loadHistory()
+        val history = searchHistoryInteractor.loadHistory()
 
         if (hasFocus && isEmpty && history.isNotEmpty()) {
             historyScrollView.visibility = View.VISIBLE; recyclerView.visibility = View.GONE; emptyState.visibility = View.GONE; errorState.visibility = View.GONE
@@ -177,27 +174,27 @@ class SearchActivity : AppCompatActivity() {
         }
 
         recyclerView.isVisible = false; emptyState.isVisible = false; errorState.isVisible = false; historyLayout.isVisible = false; progressBar.visibility = View.VISIBLE
-
-        iTunesService.search(query).enqueue(object : Callback<ITunesSearchResponse> {
-            override fun onResponse(call: Call<ITunesSearchResponse>, response: Response<ITunesSearchResponse>) {
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val tracks = response.body()?.results?.map { it.toTrack() } ?: emptyList()
-                    if (tracks.isEmpty()) {
+        interactor.searchTracks(query, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>) {
+                runOnUiThread {
+                    progressBar.visibility = View.GONE
+                    if (foundTracks.isEmpty()) {
                         showEmptyState()
                     } else {
-                        showResults(tracks)
+                        showResults(foundTracks)
                     }
-                } else {
-                    showErrorState()
                 }
             }
-
-            override fun onFailure(call: Call<ITunesSearchResponse>, t: Throwable) {
+            /*override fun onFailure(call: Call<ITunesSearchResponse>, t: Throwable) {
                 progressBar.visibility = View.GONE
                 showErrorState()
-            }
+            }*/ // Я не стал добавлять обработку ошибок, т.к. в предидущем уроке было написано "Очень верное замечание!
+                // Это вопрос обработки ошибок в чистой архитектуре.
+                //Для этого существует достаточно простое и удобное решение, о котором мы поговорим в следующем спринте.
+                // Пока будем считать, что нам не нужно обрабатывать ошибки каким-то особым образом."
+                // Т.к. достаточно простое и удобное решение мне будет предоставлено в след. спринте, я в данный момент отказался от обработки ошибок.
         })
+
     }
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
@@ -251,7 +248,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 

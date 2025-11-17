@@ -1,18 +1,18 @@
-package com.example.verstka_last
+package com.example.verstka_last.data.network
 
-import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import com.example.verstka_last.domain.api.SearchHistoryRepository
+import com.example.verstka_last.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import androidx.core.content.edit
 
-class SearchHistory(private val context: Context) {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("search_history", Context.MODE_PRIVATE)
-    private val gson = Gson()
+class SearchHistoryRepositoryImpl(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson) : SearchHistoryRepository {
     private val key = "search_history"
 
-    fun saveTrack(track: Track) {
+    override fun saveTrack(track: Track) {
         val history = loadHistory().toMutableList()
 
         history.removeAll { it.trackId == track.trackId }
@@ -25,7 +25,7 @@ class SearchHistory(private val context: Context) {
         sharedPreferences.edit { putString(key, json) }
     }
 
-    fun loadHistory(): List<Track> {
+    override fun loadHistory(): List<Track> {
         val json = sharedPreferences.getString(key, null)
         return if (json != null) {
             val type = object : TypeToken<List<Track>>() {}.type
@@ -35,7 +35,7 @@ class SearchHistory(private val context: Context) {
         }
     }
 
-    fun clearHistory() {
+    override fun clearHistory() {
         sharedPreferences.edit { remove(key) }
     }
 }

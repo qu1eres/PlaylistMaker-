@@ -1,4 +1,4 @@
-package com.example.verstka_last
+package com.example.verstka_last.presentation.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -7,20 +7,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.verstka_last.R
+import com.example.verstka_last.domain.Creator
+import com.example.verstka_last.domain.api.ThemeInteractor
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var themeInteractor: ThemeInteractor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
-        themeSwitcher.isChecked = (application as App).darkTheme
+        themeInteractor = Creator.provideThemeInteractor(this)
+
+        themeSwitcher.isChecked = themeInteractor.isDarkTheme()
 
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            (application as App).switchTheme(checked)
+            if (checked != themeInteractor.isDarkTheme()) {
+                themeInteractor.toggleTheme()
+                applyThemeAndRestart()
+            }
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -82,5 +91,9 @@ class SettingsActivity : AppCompatActivity() {
         val agreementUrl = getString(R.string.agreement_link)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
         startActivity(intent)
+    }
+
+    private fun applyThemeAndRestart() {
+        themeInteractor.applyTheme(this)
     }
 }
