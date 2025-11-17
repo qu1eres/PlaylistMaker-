@@ -1,4 +1,4 @@
-package com.example.verstka_last.data.network
+package com.example.verstka_last.domain.impl
 
 import com.example.verstka_last.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.domain.api.SearchHistoryRepository

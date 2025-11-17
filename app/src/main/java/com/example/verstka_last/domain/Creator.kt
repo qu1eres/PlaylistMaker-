@@ -3,7 +3,7 @@ package com.example.verstka_last.domain
 import android.content.Context
 import com.example.verstka_last.data.local.ThemePreferences
 import com.example.verstka_last.data.network.RetrofitNetworkClient
-import com.example.verstka_last.data.network.SearchHistoryInteractorImpl
+import com.example.verstka_last.domain.impl.SearchHistoryInteractorImpl
 import com.example.verstka_last.data.network.SearchHistoryRepositoryImpl
 import com.example.verstka_last.data.network.ThemeRepositoryImpl
 import com.example.verstka_last.data.network.TrackRepositoryImpl
