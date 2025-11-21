@@ -8,15 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.verstka_last.R
 import com.example.verstka_last.creator.Creator
 import com.example.verstka_last.databinding.ActivitySettingsBinding
+import com.example.verstka_last.sharing.ui.SharingViewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private val viewModel: SettingsViewModel by viewModels {
+    private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(Creator.provideThemeInteractor(this))
+    }
+    private val sharingViewModel: SharingViewModel by viewModels {
+        Creator.provideSharingViewModelFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,36 +46,40 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.buttonShare.setOnClickListener {
-            viewModel.onShareClicked()
+            sharingViewModel.onShareClicked()
         }
 
         binding.buttonSupport.setOnClickListener {
-            viewModel.onSupportClicked()
+            sharingViewModel.onSupportClicked()
         }
 
         binding.buttonAgreement.setOnClickListener {
-            viewModel.onAgreementClicked()
+            sharingViewModel.onAgreementClicked()
         }
 
         binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.onThemeToggled(checked)
+            settingsViewModel.onThemeToggled(checked)
         }
     }
 
     private fun setupObservers() {
-        viewModel.themeSettingsState.observe(this) { isDark ->
+        settingsViewModel.themeSettingsState.observe(this) { isDark ->
             updateThemeSwitch(isDark)
             applySystemTheme(isDark)
         }
 
-        viewModel.navigationEvent.observe(this) { event ->
-            event?.let { navigation ->
-                when (navigation) {
-                    SettingsViewModel.NavigationEvent.ShareApp -> shareApp()
-                    SettingsViewModel.NavigationEvent.ContactSupport -> contactSupport()
-                    SettingsViewModel.NavigationEvent.OpenAgreement -> openAgreement()
+        sharingViewModel.sharingEvent.observe(this) { event ->
+            event?.let { sharingEvent ->
+                when (sharingEvent) {
+                    is SharingViewModel.SharingEvent.ShareApp -> shareApp(sharingEvent.message, sharingEvent.link)
+                    is SharingViewModel.SharingEvent.ContactSupport -> contactSupport(
+                        sharingEvent.email,
+                        sharingEvent.subject,
+                        sharingEvent.body
+                    )
+                    is SharingViewModel.SharingEvent.OpenAgreement -> openAgreement(sharingEvent.url)
                 }
-                viewModel.onNavigationHandled()
+                sharingViewModel.onSharingEventHandled()
             }
         }
     }
@@ -81,7 +88,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.themeSwitcher.setOnCheckedChangeListener(null)
         binding.themeSwitcher.isChecked = isDark
         binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.onThemeToggled(checked)
+            settingsViewModel.onThemeToggled(checked)
         }
     }
 
@@ -92,8 +99,8 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun shareApp() {
-        val shareText = getString(R.string.share_message, getString(R.string.share_link))
+    private fun shareApp(message: String, link: String) {
+        val shareText = String.format(message, link)
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, shareText)
@@ -103,23 +110,22 @@ class SettingsActivity : AppCompatActivity() {
         startActivity(shareIntent)
     }
 
-    private fun contactSupport() {
-        val email = getString(R.string.support_email)
-        val subject = getString(R.string.support_subject)
-        val body = getString(R.string.support_body)
-
+    private fun contactSupport(email: String, subject: String, body: String) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, body)
         }
-        try { startActivity(intent) } catch (e: Exception) { }
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {}
     }
 
-    private fun openAgreement() {
-        val agreementUrl = getString(R.string.agreement_link)
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
-        try { startActivity(intent) } catch (e: Exception) { }
+    private fun openAgreement(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {}
     }
 }
