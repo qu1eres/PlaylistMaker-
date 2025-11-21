@@ -40,6 +40,10 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
+        binding.playButtonActive.setOnClickListener {
+            viewModel.playbackControl()
+        }
+
         binding.toolBar.setNavigationOnClickListener { finish() }
 
         viewModel.playerState.observe(this) { state ->
@@ -59,20 +63,24 @@ class PlayerActivity : AppCompatActivity() {
     private fun render(state: PlayerState) {
         when (state) {
             PlayerState.Default -> {
+                binding.play.isVisible = true
+                binding.playButtonActive.isVisible = false
                 binding.play.isEnabled = true
-                binding.play.setImageResource(R.drawable.ic_button_play)
             }
             PlayerState.Prepared -> {
+                binding.play.isVisible = true
+                binding.playButtonActive.isVisible = false
                 binding.play.isEnabled = true
-                binding.play.setImageResource(R.drawable.ic_button_play)
             }
             PlayerState.Playing -> {
-                binding.play.isEnabled = true
-                binding.play.setImageResource(R.drawable.ic_active_play_button)
+                binding.play.isVisible = false
+                binding.playButtonActive.isVisible = true
+                binding.playButtonActive.isEnabled = true
             }
             PlayerState.Paused -> {
+                binding.play.isVisible = true
+                binding.playButtonActive.isVisible = false
                 binding.play.isEnabled = true
-                binding.play.setImageResource(R.drawable.ic_button_play)
             }
         }
     }
