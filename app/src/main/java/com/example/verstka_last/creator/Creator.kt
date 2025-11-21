@@ -20,6 +20,10 @@ import com.example.verstka_last.search.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.search.domain.impl.SearchHistoryInteractorImpl
 import com.example.verstka_last.search.data.network.SearchHistoryRepositoryImpl
 import com.example.verstka_last.search.presentation.SearchViewModel
+import com.example.verstka_last.sharing.domain.api.SharingInteractor
+import com.example.verstka_last.sharing.domain.impl.SharingInteractorImpl
+import com.example.verstka_last.sharing.domain.impl.SharingRepositoryImpl
+import com.example.verstka_last.sharing.ui.SharingViewModelFactory
 import com.google.gson.Gson
 
 object Creator {
@@ -47,6 +51,15 @@ object Creator {
 
     private fun getPlayerInteractor(): PlayerInteractor {
         return PlayerInteractorImpl()
+    }
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        val sharingRepository = SharingRepositoryImpl(context)
+        return SharingInteractorImpl(sharingRepository)
+    }
+
+    fun provideSharingViewModelFactory(context: Context): ViewModelProvider.Factory {
+        return SharingViewModelFactory(provideSharingInteractor(context))
     }
 
     fun providePlayerViewModelFactory(): ViewModelProvider.Factory {

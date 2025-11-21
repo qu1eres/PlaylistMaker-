@@ -132,7 +132,7 @@ class SearchActivity : AppCompatActivity() {
         when (state) {
             is SearchState.History -> historyAdapter.updateTracks(state.tracks)
             is SearchState.Results -> adapter.updateTracks(state.tracks)
-            else -> { /* Другие состояния не требуют специальной обработки данных */ }
+            else -> {  }
         }
     }
 

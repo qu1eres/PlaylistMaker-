@@ -3,72 +3,102 @@ package com.example.verstka_last.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.verstka_last.R
 import com.example.verstka_last.creator.Creator
-import com.example.verstka_last.settings.domain.api.ThemeInteractor
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.verstka_last.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var themeInteractor: ThemeInteractor
+
+    private lateinit var binding: ActivitySettingsBinding
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(Creator.provideThemeInteractor(this))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        themeInteractor = Creator.provideThemeInteractor(this)
+        setupEdgeToEdge()
+        setupViews()
+        setupObservers()
+    }
 
-        themeSwitcher.isChecked = themeInteractor.isDarkTheme()
-
-        themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            if (checked != themeInteractor.isDarkTheme()) {
-                themeInteractor.toggleTheme()
-                applyThemeAndRestart()
-            }
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+    private fun setupEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
-        val buttonSettings = findViewById<MaterialButton>(R.id.settings_button_back)
-        buttonSettings.setOnClickListener {
+    private fun setupViews() {
+        binding.settingsButtonBack.setOnClickListener {
             finish()
         }
-        val shareButton = findViewById<MaterialButton>(R.id.button_share)
-        shareButton.setOnClickListener {
-            shareApp()
+
+        binding.buttonShare.setOnClickListener {
+            viewModel.onShareClicked()
         }
 
-        val supportButton = findViewById<MaterialButton>(R.id.button_support)
-        supportButton.setOnClickListener {
-            contactSupport()
+        binding.buttonSupport.setOnClickListener {
+            viewModel.onSupportClicked()
         }
 
-        val agreementButton = findViewById<MaterialButton>(R.id.button_agreement)
-        agreementButton.setOnClickListener {
-            openAgreement()
+        binding.buttonAgreement.setOnClickListener {
+            viewModel.onAgreementClicked()
+        }
+
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            viewModel.onThemeToggled(checked)
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.themeSettingsState.observe(this) { isDark ->
+            updateThemeSwitch(isDark)
+            applySystemTheme(isDark)
+        }
+
+        viewModel.navigationEvent.observe(this) { event ->
+            event?.let { navigation ->
+                when (navigation) {
+                    SettingsViewModel.NavigationEvent.ShareApp -> shareApp()
+                    SettingsViewModel.NavigationEvent.ContactSupport -> contactSupport()
+                    SettingsViewModel.NavigationEvent.OpenAgreement -> openAgreement()
+                }
+                viewModel.onNavigationHandled()
+            }
+        }
+    }
+
+    private fun updateThemeSwitch(isDark: Boolean) {
+        binding.themeSwitcher.setOnCheckedChangeListener(null)
+        binding.themeSwitcher.isChecked = isDark
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            viewModel.onThemeToggled(checked)
+        }
+    }
+
+    private fun applySystemTheme(isDark: Boolean) {
+        val newMode = if (isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        if (AppCompatDelegate.getDefaultNightMode() != newMode) {
+            AppCompatDelegate.setDefaultNightMode(newMode)
         }
     }
 
     private fun shareApp() {
-        val shareText = getString(
-            R.string.share_message,
-            getString(R.string.share_link)
-        )
-
+        val shareText = getString(R.string.share_message, getString(R.string.share_link))
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, shareText)
             type = "text/plain"
         }
-
         val shareIntent = Intent.createChooser(sendIntent, null)
         startActivity(shareIntent)
     }
@@ -84,16 +114,12 @@ class SettingsActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, body)
         }
-        startActivity(intent)
+        try { startActivity(intent) } catch (e: Exception) { }
     }
 
     private fun openAgreement() {
         val agreementUrl = getString(R.string.agreement_link)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
-        startActivity(intent)
-    }
-
-    private fun applyThemeAndRestart() {
-        themeInteractor.applyTheme(this)
+        try { startActivity(intent) } catch (e: Exception) { }
     }
 }
