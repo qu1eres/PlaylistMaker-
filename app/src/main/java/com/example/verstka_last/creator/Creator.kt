@@ -1,6 +1,7 @@
 package com.example.verstka_last.creator
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.verstka_last.settings.data.local.ThemePreferences
@@ -18,6 +19,7 @@ import com.example.verstka_last.search.domain.impl.TracksInteractorImpl
 import com.example.verstka_last.search.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.search.domain.impl.SearchHistoryInteractorImpl
 import com.example.verstka_last.search.data.network.SearchHistoryRepositoryImpl
+import com.example.verstka_last.search.presentation.SearchViewModel
 import com.google.gson.Gson
 
 object Creator {
@@ -53,6 +55,18 @@ object Creator {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return PlayerViewModel(
                     playerInteractor = getPlayerInteractor()
+                ) as T
+            }
+        }
+    }
+
+    fun provideSearchViewModelFactory(activity: AppCompatActivity): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return SearchViewModel(
+                    provideTracksInteractor(),
+                    provideSearchHistoryInteractor(activity)
                 ) as T
             }
         }
