@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".presentation.App"
+        android:name=".core.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:theme="@style/Theme.Verstka_last"
@@ -15,19 +15,19 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.search.SearchActivity"
+            android:name=".search.presentation.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.mediaplayer.PlayerActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.settings.SettingsActivity"
+            android:name=".settings.ui.SettingsActivity"
             android:exported="true" />
         <activity
-            android:name=".presentation.ui.library.MediaLibraryActivity"
+            android:name=".media.MediaLibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.mainmenu.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
