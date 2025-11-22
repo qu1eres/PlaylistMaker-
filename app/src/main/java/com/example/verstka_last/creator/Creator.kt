@@ -4,15 +4,16 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.verstka_last.settings.data.local.ThemePreferences
 import com.example.verstka_last.core.data.network.RetrofitNetworkClient
 import com.example.verstka_last.player.data.impl.PlayerRepositoryImpl
 import com.example.verstka_last.player.domain.api.PlayerInteractor
 import com.example.verstka_last.player.domain.api.PlayerRepository
 import com.example.verstka_last.player.domain.impl.PlayerInteractorImpl
 import com.example.verstka_last.player.ui.PlayerViewModel
-import com.example.verstka_last.settings.data.impl.ThemeRepositoryImpl
+import com.example.verstka_last.search.data.network.iTunesAPI
+import com.example.verstka_last.settings.data.local.ThemePreferences
 import com.example.verstka_last.search.data.network.TrackRepositoryImpl
+import com.example.verstka_last.settings.data.impl.ThemeRepositoryImpl
 import com.example.verstka_last.settings.domain.api.ThemeInteractor
 import com.example.verstka_last.search.domain.api.TrackRepository
 import com.example.verstka_last.search.domain.api.TracksInteractor
@@ -27,10 +28,29 @@ import com.example.verstka_last.sharing.domain.impl.SharingInteractorImpl
 import com.example.verstka_last.sharing.data.impl.SharingRepositoryImpl
 import com.example.verstka_last.sharing.ui.SharingViewModelFactory
 import com.google.gson.Gson
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
+    private const val ITUNES_BASE_URL = "https://itunes.apple.com"
+
+    private fun getRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(ITUNES_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    private fun getITunesService(): iTunesAPI {
+        return getRetrofit().create(iTunesAPI::class.java)
+    }
+
+    private fun getNetworkClient(): RetrofitNetworkClient {
+        return RetrofitNetworkClient(getITunesService())
+    }
+
     private fun getTracksRepository(): TrackRepository {
-        return TrackRepositoryImpl(RetrofitNetworkClient())
+        return TrackRepositoryImpl(getNetworkClient())
     }
 
     fun provideTracksInteractor(): TracksInteractor {

@@ -46,12 +46,8 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.toolBar.setNavigationOnClickListener { finish() }
 
-        viewModel.playerState.observe(this) { state ->
+        viewModel.screenState.observe(this) { state ->
             render(state)
-        }
-
-        viewModel.currentTime.observe(this) { time ->
-            binding.currentPlayTime.text = time
         }
     }
 
@@ -60,8 +56,8 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.pausePlayer()
     }
 
-    private fun render(state: PlayerState) {
-        when (state) {
+    private fun render(state: PlayerScreenState) {
+        when (state.playerState) {
             PlayerState.Default -> {
                 binding.play.isVisible = true
                 binding.playButtonActive.isVisible = false
@@ -83,6 +79,8 @@ class PlayerActivity : AppCompatActivity() {
                 binding.play.isEnabled = true
             }
         }
+
+        binding.currentPlayTime.text = state.currentTime
     }
 
     private fun setupUI(track: Track) {

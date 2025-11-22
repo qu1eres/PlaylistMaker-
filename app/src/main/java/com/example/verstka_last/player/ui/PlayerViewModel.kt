@@ -1,3 +1,4 @@
+// ui/PlayerViewModel.kt
 package com.example.verstka_last.player.ui
 
 import android.os.Handler
@@ -13,18 +14,16 @@ class PlayerViewModel(
     private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
-    private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default)
-    val playerState: LiveData<PlayerState> = _playerState
-
-    private val _currentTime = MutableLiveData<String>("00:00")
-    val currentTime: LiveData<String> = _currentTime
+    private val _screenState = MutableLiveData(PlayerScreenState())
+    val screenState: LiveData<PlayerScreenState> = _screenState
 
     private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (playerInteractor.isPlaying()) {
                 val currentPosition = playerInteractor.getCurrentPosition()
-                _currentTime.postValue(SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition))
+                val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                updateScreenState { it.copy(currentTime = formattedTime) }
                 mainThreadHandler?.postDelayed(this, DELAY_MILLIS)
             }
         }
@@ -35,18 +34,22 @@ class PlayerViewModel(
         playerInteractor.preparePlayer(
             url = previewUrl,
             onPrepared = {
-                _playerState.postValue(PlayerState.Prepared)
+                updateScreenState { it.copy(playerState = PlayerState.Prepared) }
             },
             onCompletion = {
-                _playerState.postValue(PlayerState.Prepared)
-                _currentTime.postValue("00:00")
+                updateScreenState {
+                    it.copy(
+                        playerState = PlayerState.Prepared,
+                        currentTime = "00:00"
+                    )
+                }
                 mainThreadHandler?.removeCallbacks(timerRunnable)
             }
         )
     }
 
     fun playbackControl() {
-        when (_playerState.value) {
+        when (_screenState.value?.playerState) {
             PlayerState.Playing -> pausePlayer()
             PlayerState.Prepared, PlayerState.Paused -> startPlayer()
             else -> {}
@@ -55,14 +58,19 @@ class PlayerViewModel(
 
     fun pausePlayer() {
         playerInteractor.pausePlayer()
-        _playerState.postValue(PlayerState.Paused)
+        updateScreenState { it.copy(playerState = PlayerState.Paused) }
         mainThreadHandler?.removeCallbacks(timerRunnable)
     }
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
-        _playerState.postValue(PlayerState.Playing)
+        updateScreenState { it.copy(playerState = PlayerState.Playing) }
         mainThreadHandler?.post(timerRunnable)
+    }
+
+    private fun updateScreenState(update: (PlayerScreenState) -> PlayerScreenState) {
+        val currentState = _screenState.value ?: PlayerScreenState()
+        _screenState.postValue(update(currentState))
     }
 
     override fun onCleared() {
