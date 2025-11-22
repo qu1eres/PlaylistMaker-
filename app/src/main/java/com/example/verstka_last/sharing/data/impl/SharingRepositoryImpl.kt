@@ -1,10 +1,10 @@
-package com.example.verstka_last.sharing.domain.impl
+package com.example.verstka_last.sharing.data.impl
 
 import android.content.Context
 import com.example.verstka_last.R
-import com.example.verstka_last.sharing.domain.api.SharingRepository
 import com.example.verstka_last.sharing.domain.api.AgreementData
 import com.example.verstka_last.sharing.domain.api.ShareData
+import com.example.verstka_last.sharing.domain.api.SharingRepository
 import com.example.verstka_last.sharing.domain.api.SupportData
 
 class SharingRepositoryImpl(

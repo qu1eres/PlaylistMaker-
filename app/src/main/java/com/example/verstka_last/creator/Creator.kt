@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.verstka_last.settings.data.local.ThemePreferences
 import com.example.verstka_last.core.data.network.RetrofitNetworkClient
+import com.example.verstka_last.player.data.impl.PlayerRepositoryImpl
 import com.example.verstka_last.player.domain.api.PlayerInteractor
+import com.example.verstka_last.player.domain.api.PlayerRepository
 import com.example.verstka_last.player.domain.impl.PlayerInteractorImpl
 import com.example.verstka_last.player.ui.PlayerViewModel
 import com.example.verstka_last.settings.data.impl.ThemeRepositoryImpl
@@ -22,7 +24,7 @@ import com.example.verstka_last.search.data.network.SearchHistoryRepositoryImpl
 import com.example.verstka_last.search.presentation.SearchViewModel
 import com.example.verstka_last.sharing.domain.api.SharingInteractor
 import com.example.verstka_last.sharing.domain.impl.SharingInteractorImpl
-import com.example.verstka_last.sharing.domain.impl.SharingRepositoryImpl
+import com.example.verstka_last.sharing.data.impl.SharingRepositoryImpl
 import com.example.verstka_last.sharing.ui.SharingViewModelFactory
 import com.google.gson.Gson
 
@@ -49,8 +51,12 @@ object Creator {
         return SearchHistoryInteractorImpl(searchHistoryRepository)
     }
 
+    private fun getPlayerRepository(): PlayerRepository {
+        return PlayerRepositoryImpl()
+    }
+
     private fun getPlayerInteractor(): PlayerInteractor {
-        return PlayerInteractorImpl()
+        return PlayerInteractorImpl(getPlayerRepository())
     }
 
     fun provideSharingInteractor(context: Context): SharingInteractor {

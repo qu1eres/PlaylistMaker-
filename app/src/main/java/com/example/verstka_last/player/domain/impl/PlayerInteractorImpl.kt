@@ -1,44 +1,33 @@
 package com.example.verstka_last.player.domain.impl
 
-import android.media.MediaPlayer
 import com.example.verstka_last.player.domain.api.PlayerInteractor
+import com.example.verstka_last.player.domain.api.PlayerRepository
 
-class PlayerInteractorImpl : PlayerInteractor {
-
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerInteractorImpl(
+    private val playerRepository: PlayerRepository
+) : PlayerInteractor {
 
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        if (mediaPlayer != null) {
-            releasePlayer()
-        }
-
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.apply {
-            setDataSource(url)
-            prepareAsync()
-            setOnPreparedListener { onPrepared() }
-            setOnCompletionListener { onCompletion() }
-        }
+        playerRepository.preparePlayer(url, onPrepared, onCompletion)
     }
 
     override fun startPlayer() {
-        mediaPlayer?.start()
+        playerRepository.startPlayer()
     }
 
     override fun pausePlayer() {
-        mediaPlayer?.pause()
+        playerRepository.pausePlayer()
     }
 
     override fun releasePlayer() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+        playerRepository.releasePlayer()
     }
 
     override fun getCurrentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+        return playerRepository.getCurrentPosition()
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying ?: false
+        return playerRepository.isPlaying()
     }
 }
