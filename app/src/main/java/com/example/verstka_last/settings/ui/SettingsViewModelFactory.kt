@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.verstka_last.settings.domain.api.ThemeInteractor
 
+// Оставлять или удалять с концами? Пригодится ли в будущем?
 class SettingsViewModelFactory(
     private val themeInteractor: ThemeInteractor
 ) : ViewModelProvider.Factory {

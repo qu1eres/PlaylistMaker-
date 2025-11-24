@@ -4,9 +4,7 @@ import com.example.verstka_last.search.data.dto.Response
 import com.example.verstka_last.search.data.dto.TrackRequest
 import com.example.verstka_last.search.data.network.iTunesAPI
 
-class RetrofitNetworkClient(
-    private val iTunesService: iTunesAPI
-) : NetworkClient {
+class RetrofitNetworkClient(private val iTunesService: iTunesAPI) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (dto is TrackRequest) {

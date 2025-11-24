@@ -3,24 +3,19 @@ package com.example.verstka_last.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.verstka_last.creator.Creator
 import com.example.verstka_last.databinding.ActivitySettingsBinding
 import com.example.verstka_last.sharing.ui.SharingViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private val settingsViewModel: SettingsViewModel by viewModels {
-        SettingsViewModelFactory(Creator.provideThemeInteractor(this))
-    }
-    private val sharingViewModel: SharingViewModel by viewModels {
-        Creator.provideSharingViewModelFactory(this)
-    }
+    private val settingsViewModel: SettingsViewModel by viewModel()
+    private val sharingViewModel: SharingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

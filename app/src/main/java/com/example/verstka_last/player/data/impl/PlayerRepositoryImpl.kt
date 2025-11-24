@@ -3,8 +3,7 @@ package com.example.verstka_last.player.data.impl
 import android.media.MediaPlayer
 import com.example.verstka_last.player.domain.api.PlayerRepository
 
-class PlayerRepositoryImpl : PlayerRepository {
-    private var mediaPlayer: MediaPlayer? = null
+class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer? = null) : PlayerRepository {
 
     override fun preparePlayer(
         url: String,

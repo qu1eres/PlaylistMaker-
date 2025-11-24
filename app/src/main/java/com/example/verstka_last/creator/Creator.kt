@@ -12,7 +12,6 @@ import com.example.verstka_last.player.domain.impl.PlayerInteractorImpl
 import com.example.verstka_last.player.ui.PlayerViewModel
 import com.example.verstka_last.search.data.network.iTunesAPI
 import com.example.verstka_last.settings.data.local.ThemePreferences
-import com.example.verstka_last.search.data.network.TrackRepositoryImpl
 import com.example.verstka_last.settings.data.impl.ThemeRepositoryImpl
 import com.example.verstka_last.settings.domain.api.ThemeInteractor
 import com.example.verstka_last.search.domain.api.TrackRepository
@@ -31,31 +30,29 @@ import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object Creator {
-    private const val ITUNES_BASE_URL = "https://itunes.apple.com"
-
-    private fun getRetrofit(): Retrofit {
+/*object Creator {
+    /*private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(ITUNES_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
+    }*/
 
-    private fun getITunesService(): iTunesAPI {
+    /*private fun getITunesService(): iTunesAPI {
         return getRetrofit().create(iTunesAPI::class.java)
-    }
+    }*/
 
-    private fun getNetworkClient(): RetrofitNetworkClient {
+    /*private fun getNetworkClient(): RetrofitNetworkClient {
         return RetrofitNetworkClient(getITunesService())
-    }
+    }*/
 
-    private fun getTracksRepository(): TrackRepository {
+    /*private fun getTracksRepository(): TrackRepository {
         return TrackRepositoryImpl(getNetworkClient())
-    }
+    }*/
 
-    fun provideTracksInteractor(): TracksInteractor {
+    /*fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository())
-    }
+    }*/
 
     fun provideThemeInteractor(context: Context): ThemeInteractor {
         val preferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
@@ -110,4 +107,4 @@ object Creator {
             }
         }
     }
-}
+}*/
