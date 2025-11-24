@@ -9,8 +9,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val sharingModule = module {
-    single<SharingRepository> { SharingRepositoryImpl(get()) }
-    single<SharingInteractor> { SharingInteractorImpl(get()) }
+    factory<SharingRepository> { SharingRepositoryImpl(get()) }
+    factory<SharingInteractor> { SharingInteractorImpl(get()) }
 
     viewModel { SharingViewModel(get()) }
 }

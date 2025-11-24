@@ -9,7 +9,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val playerModule = module {
-    single<PlayerRepository> { PlayerRepositoryImpl() }
-    single<PlayerInteractor> { PlayerInteractorImpl(get()) }
+    factory<PlayerRepository> { PlayerRepositoryImpl() }
+    factory<PlayerInteractor> { PlayerInteractorImpl(get()) }
     viewModel { PlayerViewModel(get()) }
 }

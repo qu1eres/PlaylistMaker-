@@ -17,8 +17,8 @@ val settingsModule = module {
     }
 
     single { ThemePreferences(get(named("app_settings"))) }
-    single<ThemeRepository> { ThemeRepositoryImpl(get()) }
-    single<ThemeInteractor> { ThemeInteractorImpl(get()) }
+    factory<ThemeRepository> { ThemeRepositoryImpl(get()) }
+    factory<ThemeInteractor> { ThemeInteractorImpl(get()) }
 
     viewModel { SettingsViewModel(get()) }
 }
