@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.verstka_last.creator.Creator
 import com.example.verstka_last.databinding.ActivitySearchBinding
 import com.example.verstka_last.player.ui.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchViewModel by viewModels {
-        Creator.provideSearchViewModelFactory(this)
-    }
+    private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter

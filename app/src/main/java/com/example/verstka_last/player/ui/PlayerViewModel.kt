@@ -1,4 +1,3 @@
-// ui/PlayerViewModel.kt
 package com.example.verstka_last.player.ui
 
 import android.os.Handler

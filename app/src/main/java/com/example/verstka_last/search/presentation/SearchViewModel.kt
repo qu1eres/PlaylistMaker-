@@ -83,7 +83,6 @@ class SearchViewModel(
     }
 
     private fun searchDebounce(query: String) {
-        // Отменяем предыдущий поиск
         searchRunnable?.let { handler.removeCallbacks(it) }
 
         if (query.isEmpty()) {
@@ -103,7 +102,6 @@ class SearchViewModel(
 
         executor.execute {
             try {
-                // Используем callback-based подход вместо suspend функций
                 tracksInteractor.searchTracks(query, object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: List<Track>) {
                         val newState = if (foundTracks.isEmpty()) {
@@ -146,7 +144,6 @@ class SearchViewModel(
         return current
     }
 
-    // Очистка ресурсов при уничтожении ViewModel
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacksAndMessages(null)
