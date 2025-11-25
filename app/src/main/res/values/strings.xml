@@ -30,4 +30,10 @@
     <string name="country_format">Страна</string>
     <string name="duration_format">Длительность</string>
     <string name="currentPlayTime">00:32</string>
+    <string name="message_playlist">Вы не создали\nни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="tracks_message">Ваша медиатека пуста</string>
+    <string name="medialibrary">Медиатека</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="favorites">Избранные треки</string>
 </resources>

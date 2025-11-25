@@ -6,6 +6,7 @@
     <dimen name="heading_text">22sp</dimen>
     <dimen name="settings_button_text">16sp</dimen>
     <dimen name="main_menu_icon_padding">8sp</dimen>
+    <dimen name="padding_base">16dp</dimen>
 
     <dimen name="track_item_height">61dp</dimen>
     <dimen name="track_cover_size">45dp</dimen>

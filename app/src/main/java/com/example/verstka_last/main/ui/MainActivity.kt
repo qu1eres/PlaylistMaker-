@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.verstka_last.R
-import com.example.verstka_last.media.MediaLibraryActivity
+import com.example.verstka_last.media.presentation.MediaLibraryActivity
 import com.example.verstka_last.search.presentation.SearchActivity
 import com.example.verstka_last.settings.ui.SettingsActivity
 import com.google.android.material.button.MaterialButton
