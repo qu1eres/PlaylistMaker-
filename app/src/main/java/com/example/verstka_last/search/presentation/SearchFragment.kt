@@ -5,25 +5,27 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.verstka_last.databinding.ActivitySearchBinding
-import com.example.verstka_last.player.ui.PlayerActivity
+import com.example.verstka_last.R
+import com.example.verstka_last.core.domain.models.Track
+import com.example.verstka_last.databinding.FragmentSearchBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentSearchBinding.bind(view)
 
         setupRecyclerViews()
         setupClickListeners()
@@ -34,11 +36,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViews() {
-        binding.tracksRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.tracksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = TrackAdapter(emptyList())
         binding.tracksRecyclerView.adapter = adapter
 
-        binding.historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         historyAdapter = TrackAdapter(emptyList())
         binding.historyRecyclerView.adapter = historyAdapter
 
@@ -52,10 +54,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        binding.backButton.setOnClickListener {
-            finish()
-        }
-
         binding.clearIcon.setOnClickListener {
             viewModel.onClearClick()
             hideKeyboard(binding.inputEditText)
@@ -99,17 +97,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.searchState.observe(this) { state ->
+        viewModel.searchState.observe(viewLifecycleOwner) { state ->
             renderState(state)
         }
 
-        viewModel.currentSearchText.observe(this) { text ->
+        viewModel.currentSearchText.observe(viewLifecycleOwner) { text ->
             if (binding.inputEditText.text?.toString() != text) {
                 binding.inputEditText.setText(text)
             }
         }
 
-        viewModel.navigationEvent.observe(this) { event ->
+        viewModel.navigationEvent.observe(viewLifecycleOwner) { event ->
             event?.let {
                 when (it) {
                     is SearchViewModel.NavigationEvent.OpenPlayer -> openPlayer(it.track)
@@ -133,15 +131,24 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun openPlayer(track: com.example.verstka_last.core.domain.models.Track) {
-        val intent = Intent(this, PlayerActivity::class.java).apply {
-            putExtra("track", track)
+    private fun openPlayer(track: Track) {
+        val bundle = Bundle().apply {
+            putSerializable("track", track)
         }
-        startActivity(intent)
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment3, bundle)
     }
 
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance() = SearchFragment()
     }
 }

@@ -3,43 +3,31 @@ package com.example.verstka_last.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.verstka_last.databinding.ActivitySettingsBinding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.verstka_last.R
+import com.example.verstka_last.databinding.FragmentSettingsBinding
 import com.example.verstka_last.sharing.ui.SharingViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
     private val settingsViewModel: SettingsViewModel by viewModel()
     private val sharingViewModel: SharingViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentSettingsBinding.bind(view)
 
-        setupEdgeToEdge()
         setupViews()
         setupObservers()
     }
 
-    private fun setupEdgeToEdge() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-    }
-
     private fun setupViews() {
-        binding.settingsButtonBack.setOnClickListener {
-            finish()
-        }
-
         binding.buttonShare.setOnClickListener {
             sharingViewModel.onShareClicked()
         }
@@ -58,12 +46,12 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        settingsViewModel.themeSettingsState.observe(this) { isDark ->
+        settingsViewModel.themeSettingsState.observe(viewLifecycleOwner) { isDark ->
             updateThemeSwitch(isDark)
             applySystemTheme(isDark)
         }
 
-        sharingViewModel.sharingEvent.observe(this) { event ->
+        sharingViewModel.sharingEvent.observe(viewLifecycleOwner) { event ->
             event?.let { sharingEvent ->
                 when (sharingEvent) {
                     is SharingViewModel.SharingEvent.ShareApp -> shareApp(sharingEvent.message, sharingEvent.link)
@@ -122,5 +110,14 @@ class SettingsActivity : AppCompatActivity() {
         try {
             startActivity(intent)
         } catch (e: Exception) {}
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance() = SettingsFragment()
     }
 }

@@ -1,41 +1,24 @@
 package com.example.verstka_last.media.presentation
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.View
+import androidx.fragment.app.Fragment
 import com.example.verstka_last.R
-import com.example.verstka_last.databinding.ActivityMediaLibraryBinding
+import com.example.verstka_last.databinding.FragmentLibraryBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MediaLibraryActivity : AppCompatActivity(R.layout.activity_media_library) {
+class MediaLibraryFragment : Fragment(R.layout.fragment_library) {
 
-    private lateinit var binding: ActivityMediaLibraryBinding
+    private var _binding: FragmentLibraryBinding? = null
+    private val binding get() = _binding!!
     private val mediaViewModel: MediaLibraryViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMediaLibraryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentLibraryBinding.bind(view)
 
-        setupViews()
-        setupEdgeToEdge()
         setupViewPager()
-    }
-
-    private fun setupEdgeToEdge() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-    }
-
-    private fun setupViews() {
-        binding.backButton.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
     }
 
     private fun setupViewPager() {
@@ -45,9 +28,17 @@ class MediaLibraryActivity : AppCompatActivity(R.layout.activity_media_library) 
         TabLayoutMediator(binding.tabLayout, binding.viewPager2) { tab, position ->
             tab.text = when (position) {
                 0 -> getString(R.string.favorites)
-                1 -> getString(R.string.playlists)
-                else -> ""
+                else -> getString(R.string.playlists)
             }
         }.attach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        fun newInstance() = MediaLibraryFragment()
     }
 }

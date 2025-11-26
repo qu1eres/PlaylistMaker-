@@ -1,37 +1,43 @@
 package com.example.verstka_last.player.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.verstka_last.R
 import com.example.verstka_last.core.domain.models.Track
-import com.example.verstka_last.databinding.ActivityAudioplayerBinding
+import com.example.verstka_last.databinding.FragmentPlayerBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment(R.layout.fragment_player) {
 
-    private lateinit var binding: ActivityAudioplayerBinding
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: PlayerViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioplayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private val track: Track by lazy {
+        arguments?.getSerializable("track") as? Track ?: throw IllegalArgumentException("че")
+    }
 
-        @Suppress("DEPRECATION")
-        val track = intent.getSerializableExtra(TRACK_KEY) as? Track ?: run {
-            finish()
-            return
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentPlayerBinding.bind(view)
 
+        val track = track
         setupUI(track)
 
         if (savedInstanceState == null) {
             viewModel.preparePlayer(track.previewUrl)
         }
 
+        setupClickListeners()
+        setupObservers()
+    }
+
+    private fun setupClickListeners() {
         binding.play.setOnClickListener {
             viewModel.playbackControl()
         }
@@ -40,9 +46,13 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
-        binding.toolBar.setNavigationOnClickListener { finish() }
+        binding.toolBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
 
-        viewModel.screenState.observe(this) { state ->
+    private fun setupObservers() {
+        viewModel.screenState.observe(viewLifecycleOwner) { state ->
             render(state)
         }
     }
@@ -95,7 +105,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.genreName.text = track.primaryGenreName
         binding.country.text = track.country
 
-        Glide.with(this)
+        Glide.with(requireContext())
             .load(track.getHighResArtworkUrl())
             .placeholder(R.drawable.ic_album_placeholder)
             .centerCrop()
@@ -103,7 +113,8 @@ class PlayerActivity : AppCompatActivity() {
             .into(binding.trackImage)
     }
 
-    companion object {
-        const val TRACK_KEY = "track"
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

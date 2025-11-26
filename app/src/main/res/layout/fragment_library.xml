@@ -19,20 +19,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints">
 
-        <ImageView
-            android:id="@+id/back_button"
-            style="@style/Main"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/search_back_button" />
-
         <TextView
             style="@style/Main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:paddingStart="28dp"
             android:text="@string/medialibrary" />
     </LinearLayout>
 
