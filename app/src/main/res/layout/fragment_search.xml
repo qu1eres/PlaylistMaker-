@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/settingsBackgroundColor"
-    tools:context=".search.presentation.SearchActivity">
+    tools:context=".search.presentation.SearchFragment">
 
     <LinearLayout
         android:id="@+id/header_container"
@@ -14,15 +14,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp"
-        android:paddingStart="4dp"
+        android:paddingStart="16dp"
         android:paddingEnd="12dp">
-
-        <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/search_back_button"
-            android:padding="12dp" />
 
         <TextView
             android:layout_width="wrap_content"

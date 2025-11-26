@@ -36,4 +36,7 @@
     <string name="medialibrary">Медиатека</string>
     <string name="playlists">Плейлисты</string>
     <string name="favorites">Избранные треки</string>
+    <string name="search_bottom_button">Поиск</string>
+    <string name="library_bottom_button">Медиатека</string>
+    <string name="settings_bottom_button">Настройки</string>
 </resources>

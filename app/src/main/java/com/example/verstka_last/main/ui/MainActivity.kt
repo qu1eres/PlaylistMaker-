@@ -1,44 +1,31 @@
 package com.example.verstka_last.main.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.verstka_last.R
-import com.example.verstka_last.media.presentation.MediaLibraryActivity
-import com.example.verstka_last.search.presentation.SearchActivity
-import com.example.verstka_last.settings.ui.SettingsActivity
-import com.google.android.material.button.MaterialButton
+import com.example.verstka_last.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val buttonSearch = findViewById<MaterialButton>(R.id.main_menu_search)
-        val buttonMedia = findViewById<MaterialButton>(R.id.main_menu_media)
-        val buttonSettings = findViewById<MaterialButton>(R.id.main_menu_settings)
-        val mediaIntent = Intent(this, MediaLibraryActivity::class.java)
-        val searchIntent = Intent(this, SearchActivity::class.java)
-        val settingsIntent = Intent(this, SettingsActivity::class.java)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupNavigation()
+    }
 
-        val buttonClickListener = View.OnClickListener { v ->
-            when (v?.id) {
-                R.id.main_menu_search -> {
-                    startActivity(searchIntent)
-                }
+    private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.container_view) as NavHostFragment
+        val navController = navHostFragment.navController
 
-                R.id.main_menu_settings -> {
-                    startActivity(settingsIntent)
-                }
-                R.id.main_menu_media -> {
-                    startActivity(mediaIntent)
-                }
-            }
-        }
-
-        buttonSearch.setOnClickListener(buttonClickListener)
-        buttonSettings.setOnClickListener(buttonClickListener)
-        buttonMedia.setOnClickListener(buttonClickListener)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
     }
 }
