@@ -147,4 +147,13 @@
         <item name="android:textColor">?attr/settingsTextColor</item>
         <item name="android:gravity">center</item>
     </style>
+
+    <style name="NavigationButtonStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="itemTextColor">@color/bottom_text_selector</item>
+        <item name="itemIconTint">@color/bottom_icon_selector</item>
+        <item name="android:textSize">12sp</item>
+        <item name="backgroundTint">?attr/settingsBackgroundColor</item>
+    </style>
 </resources>
