@@ -5,9 +5,13 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.search.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.search.domain.api.TracksInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 class SearchViewModel(
@@ -24,11 +28,11 @@ class SearchViewModel(
     private val _navigationEvent = MutableLiveData<NavigationEvent?>()
     val navigationEvent: LiveData<NavigationEvent?> = _navigationEvent
 
-    private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
 
-    private var searchRunnable: Runnable? = null
-    private var clickDebounceRunnable: Runnable? = null
+    private var searchJob: Job? = null
+    private var clickDebounceJob: Job? = null
+
     private var isClickAllowed = true
 
     fun onSearchTextChanged(text: String) {
@@ -83,35 +87,34 @@ class SearchViewModel(
     }
 
     private fun searchDebounce(query: String) {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-
         if (query.isEmpty()) {
             showHistory()
             return
         }
 
-        searchRunnable = Runnable {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
             performSearch(query)
         }
-
-        handler.postDelayed(searchRunnable!!, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun performSearch(query: String) {
         _searchState.postValue(SearchState.Loading)
 
-        executor.execute {
+        searchJob?.cancel()
+        viewModelScope.launch {
             try {
-                tracksInteractor.searchTracks(query, object : TracksInteractor.TracksConsumer {
-                    override fun consume(foundTracks: List<Track>) {
-                        val newState = if (foundTracks.isEmpty()) {
+                tracksInteractor
+                    .searchTracks(query)
+                    .collect { results ->
+                        val newState = if (results.isEmpty()) {
                             SearchState.Empty
                         } else {
-                            SearchState.Results(foundTracks)
+                            SearchState.Results(results)
                         }
                         _searchState.postValue(newState)
                     }
-                })
             } catch (e: Exception) {
                 _searchState.postValue(SearchState.Error)
             }
@@ -134,19 +137,18 @@ class SearchViewModel(
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
+            clickDebounceJob?.cancel()
 
-            clickDebounceRunnable = Runnable {
+            clickDebounceJob = viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
-
-            handler.postDelayed(clickDebounceRunnable!!, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacksAndMessages(null)
         executor.shutdown()
     }
 

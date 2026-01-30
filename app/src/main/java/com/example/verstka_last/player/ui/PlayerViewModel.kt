@@ -1,11 +1,13 @@
 package com.example.verstka_last.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.verstka_last.player.domain.api.PlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -16,14 +18,15 @@ class PlayerViewModel(
     private val _screenState = MutableLiveData(PlayerScreenState())
     val screenState: LiveData<PlayerScreenState> = _screenState
 
-    private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
-    private val timerRunnable = object : Runnable {
-        override fun run() {
-            if (playerInteractor.isPlaying()) {
+    private var timerJob: Job? = null
+
+    fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (playerInteractor.isPlaying()) {
                 val currentPosition = playerInteractor.getCurrentPosition()
                 val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                delay(DELAY_MILLIS)
                 updateScreenState { it.copy(currentTime = formattedTime) }
-                mainThreadHandler?.postDelayed(this, DELAY_MILLIS)
             }
         }
     }
@@ -42,7 +45,8 @@ class PlayerViewModel(
                         currentTime = "00:00"
                     )
                 }
-                mainThreadHandler?.removeCallbacks(timerRunnable)
+                timerJob?.cancel()
+
             }
         )
     }
@@ -58,13 +62,15 @@ class PlayerViewModel(
     fun pausePlayer() {
         playerInteractor.pausePlayer()
         updateScreenState { it.copy(playerState = PlayerState.Paused) }
-        mainThreadHandler?.removeCallbacks(timerRunnable)
+        timerJob?.cancel()
+
     }
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
         updateScreenState { it.copy(playerState = PlayerState.Playing) }
-        mainThreadHandler?.post(timerRunnable)
+        startTimer()
+
     }
 
     private fun updateScreenState(update: (PlayerScreenState) -> PlayerScreenState) {
@@ -75,7 +81,8 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         playerInteractor.releasePlayer()
-        mainThreadHandler?.removeCallbacks(timerRunnable)
+        timerJob?.cancel()
+
     }
 
     companion object {

@@ -7,8 +7,8 @@ import retrofit2.http.Query
 
 interface iTunesAPI {
     @GET("/search")
-    fun search(
+    suspend fun search(
         @Query("term") text: String,
         @Query("entity") entity: String = "song"
-    ): Call<ITunesSearchResponse>
+    ): ITunesSearchResponse
 }
