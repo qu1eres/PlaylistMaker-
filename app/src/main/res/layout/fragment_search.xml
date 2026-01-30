@@ -120,7 +120,6 @@
                     style="@style/ButtonSearchUpdate"
                     android:id="@+id/clear_history_button"
                     android:text="@string/clear_history"
-                    android:layout_marginTop="24dp"
                     android:layout_gravity="center_horizontal"/>
 
             </LinearLayout>
@@ -183,21 +182,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/load_failed_check_connection"
-                android:textSize="14sp"
-                android:layout_marginTop="8dp"
+                android:textSize="19sp"
+                android:layout_marginTop="24dp"
                 android:textColor="?attr/settingsTextColor"
                 android:fontFamily="@font/ys_display_regular"/>
 
-            <TextView
+            <Button
                 android:id="@+id/retry_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/ButtonSearchUpdate"
                 android:text="@string/retry"
-                android:textSize="14sp"
-                android:layout_marginTop="16dp"
-                android:padding="16dp"
-                android:textColor="?attr/settingsTextColor"
-                android:fontFamily="@font/ys_display_medium"/>
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
 

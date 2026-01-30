@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
+import kotlin.coroutines.cancellation.CancellationException
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -103,7 +104,7 @@ class SearchViewModel(
         _searchState.postValue(SearchState.Loading)
 
         searchJob?.cancel()
-        viewModelScope.launch {
+        searchJob = viewModelScope.launch {
             try {
                 tracksInteractor
                     .searchTracks(query)
@@ -116,6 +117,9 @@ class SearchViewModel(
                         _searchState.postValue(newState)
                     }
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    return@launch
+                }
                 _searchState.postValue(SearchState.Error)
             }
         }

@@ -5,6 +5,7 @@ import com.example.verstka_last.search.data.dto.TrackRequest
 import com.example.verstka_last.search.data.network.iTunesAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 class RetrofitNetworkClient(private val iTunesService: iTunesAPI) : NetworkClient {
 
@@ -17,8 +18,10 @@ class RetrofitNetworkClient(private val iTunesService: iTunesAPI) : NetworkClien
             try {
                 val resp = iTunesService.search(dto.expression)
                 resp.apply { resultCode = 200 }
-            }
-            catch (e: Throwable) {
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    throw e
+                }
                 Response().apply { resultCode = 500 }
             }
         }

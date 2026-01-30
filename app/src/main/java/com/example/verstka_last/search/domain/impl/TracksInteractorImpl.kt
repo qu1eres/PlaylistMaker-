@@ -12,8 +12,5 @@ class TracksInteractorImpl(
 
     override fun searchTracks(expression: String): Flow<List<Track>> {
         return trackRepository.searchTrack(expression)
-            .catch { e ->
-                emit(emptyList())
-            }
     }
 }
