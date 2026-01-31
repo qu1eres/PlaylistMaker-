@@ -33,7 +33,7 @@
     <style name="ButtonSearchUpdate" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginTop">24dp</item>
         <item name="android:textColor">?attr/searchButtonUpdateTextColor</item>
         <item name="backgroundTint">?attr/searchButtonUpdateTint</item>
         <item name="cornerRadius">54dp</item>

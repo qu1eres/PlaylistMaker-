@@ -60,5 +60,6 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.10")
     implementation("io.insert-koin:koin-android:3.3.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
 }

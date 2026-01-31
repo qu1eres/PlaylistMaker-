@@ -6,14 +6,19 @@ import com.example.verstka_last.search.domain.api.TrackRepository
 import com.example.verstka_last.search.data.dto.ITunesSearchResponse
 import com.example.verstka_last.search.data.dto.TrackRequest
 import com.example.verstka_last.search.data.dto.toDomain
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.io.IOException
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
-    override fun searchTrack(expression: String): List<Track> {
+    override fun searchTrack(expression: String): Flow<List<Track>> = flow {
         val response = networkClient.doRequest(TrackRequest(expression))
-        if (response.resultCode == 200) {
-            return (response as ITunesSearchResponse).results.map { it.toDomain() }
-        } else {
-            return emptyList()
+
+        if (response.resultCode != 200) {
+            throw IOException("${response.resultCode}")
         }
+
+        val tracks = (response as ITunesSearchResponse).results.map { it.toDomain() }
+        emit(tracks)
     }
 }
