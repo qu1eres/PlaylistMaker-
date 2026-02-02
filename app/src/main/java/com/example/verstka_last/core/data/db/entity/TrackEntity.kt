@@ -11,6 +11,7 @@ data class TrackEntity(
     @ColumnInfo(name = "artwork_url")
     val image: String,
     val title: String,
+    val artist: String,
     val collectionName: String,
     @ColumnInfo(name = "release_year")
     val releaseDate: String,

@@ -13,13 +13,13 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val searchModule = module {
-    factory<TrackRepository> { TrackRepositoryImpl(get()) }
+    factory<TrackRepository> { TrackRepositoryImpl(get(), get()) }
     factory<TracksInteractor> { TracksInteractorImpl(get()) }
     factory<SearchHistoryInteractor> {
         SearchHistoryInteractorImpl(
             SearchHistoryRepositoryImpl(
                 get(named("search_history")),
-                get()
+                get(), get()
             )
         )
     }

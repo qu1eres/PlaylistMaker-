@@ -10,10 +10,10 @@ import com.example.verstka_last.core.data.db.entity.TrackEntity
 @Dao
 interface TrackDao {
     @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTracks(track: TrackEntity)
+    suspend fun insertTrack(track: TrackEntity)
 
-    @Delete()
-    suspend fun deleteTracks(track: TrackEntity)
+    @Delete(entity = TrackEntity::class)
+    suspend fun deleteTrack(track: TrackEntity)
 
     @Query("SELECT * FROM track_table")
     suspend fun getTracks(): List<TrackEntity>

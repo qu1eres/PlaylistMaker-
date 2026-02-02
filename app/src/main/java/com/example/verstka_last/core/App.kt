@@ -3,8 +3,10 @@
     import android.app.Application
     import androidx.appcompat.app.AppCompatDelegate
     import com.example.verstka_last.di.coreModule
+    import com.example.verstka_last.di.dataModule
     import com.example.verstka_last.di.mediaLibraryModule
     import com.example.verstka_last.di.playerModule
+    import com.example.verstka_last.di.repositoryModule
     import com.example.verstka_last.di.searchModule
     import com.example.verstka_last.di.settingsModule
     import com.example.verstka_last.di.sharingModule
@@ -24,11 +26,14 @@
             startKoin {
                 androidContext(this@App)
                 modules(coreModule,
-                        settingsModule,
-                        sharingModule,
-                        searchModule,
-                        playerModule,
-                        mediaLibraryModule) }
+                    dataModule,
+                    settingsModule,
+                    sharingModule,
+                    searchModule,
+                    playerModule,
+                    mediaLibraryModule,
+                    repositoryModule
+                ) }
                 applyTheme()
         }
 
