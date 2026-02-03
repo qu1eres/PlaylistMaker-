@@ -1,10 +1,12 @@
-package com.example.verstka_last.media.presentation
+package com.example.verstka_last.media.presentation.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.verstka_last.R
 import com.example.verstka_last.databinding.FragmentLibraryBinding
+import com.example.verstka_last.media.presentation.MediaLibraryPagerAdapter
+import com.example.verstka_last.media.presentation.viewmodel.MediaLibraryViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

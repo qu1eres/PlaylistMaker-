@@ -1,4 +1,4 @@
-package com.example.verstka_last.core.domain.db
+package com.example.verstka_last.media.domain
 
 import com.example.verstka_last.core.domain.models.Track
 import kotlinx.coroutines.flow.Flow

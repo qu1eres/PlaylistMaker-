@@ -1,14 +1,15 @@
-package com.example.verstka_last.core.data.repository
+package com.example.verstka_last.media.data
 
 import com.example.verstka_last.core.data.converters.TrackDbConverter
 import com.example.verstka_last.core.data.db.AppDatabase
 import com.example.verstka_last.core.data.db.entity.TrackEntity
-import com.example.verstka_last.core.domain.db.FavoritesRepository
+import com.example.verstka_last.media.domain.FavoritesRepository
 import com.example.verstka_last.core.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FavoritesRepositoryImpl(private val appDatabase: AppDatabase, private val trackDbConverter: TrackDbConverter) : FavoritesRepository {
+class FavoritesRepositoryImpl(private val appDatabase: AppDatabase, private val trackDbConverter: TrackDbConverter) :
+    FavoritesRepository {
     override suspend fun insertTrack(track: Track) {
         appDatabase.trackDao().insertTrack(convertFromTrack(track))
     }
@@ -19,7 +20,7 @@ class FavoritesRepositoryImpl(private val appDatabase: AppDatabase, private val 
 
     override fun getTracks(): Flow<List<Track>> = flow {
         val tracks = appDatabase.trackDao().getTracks()
-        tracks.map { tracks ->  }
+        tracks.sortedByDescending { it.id }
         emit(convertFromTrackEntity(tracks))
     }
 

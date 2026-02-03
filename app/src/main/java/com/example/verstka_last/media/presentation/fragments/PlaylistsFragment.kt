@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.verstka_last.R
 import com.example.verstka_last.databinding.FragmentPlaylistsBinding
-import com.example.verstka_last.media.presentation.PlaylistsViewModel
+import com.example.verstka_last.media.presentation.viewmodel.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {

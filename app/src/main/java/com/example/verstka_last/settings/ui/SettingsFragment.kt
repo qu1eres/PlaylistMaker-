@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.verstka_last.R
 import com.example.verstka_last.databinding.FragmentSettingsBinding
 import com.example.verstka_last.sharing.ui.SharingViewModel

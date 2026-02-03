@@ -1,7 +1,7 @@
 package com.example.verstka_last.di
 
-import com.example.verstka_last.core.domain.db.FavoritesInteractor
-import com.example.verstka_last.core.domain.impl.FavoritesInteractorImpl
+import com.example.verstka_last.media.domain.FavoritesInteractor
+import com.example.verstka_last.media.domain.impl.FavoritesInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {
