@@ -14,14 +14,14 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor, private val favoritesInteractor: FavoritesInteractor) : ViewModel() {
+    private val playerInteractor: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
+) : ViewModel() {
 
     private val _screenState = MutableLiveData(PlayerScreenState())
     val screenState: LiveData<PlayerScreenState> = _screenState
 
-    private val stateFavoriteData = MutableLiveData<Boolean>()
-    fun observeFavoriteState(): LiveData<Boolean> = stateFavoriteData
-
+    private var currentTrack: Track? = null
     private var timerJob: Job? = null
 
     fun startTimer() {
@@ -35,24 +35,28 @@ class PlayerViewModel(
         }
     }
 
-    fun preparePlayer(previewUrl: String?) {
-        if (previewUrl == null) return
-        playerInteractor.preparePlayer(
-            url = previewUrl,
-            onPrepared = {
-                updateScreenState { it.copy(playerState = PlayerState.Prepared) }
-            },
-            onCompletion = {
-                updateScreenState {
-                    it.copy(
-                        playerState = PlayerState.Prepared,
-                        currentTime = "00:00"
-                    )
-                }
-                timerJob?.cancel()
+    fun preparePlayer(track: Track) {
+        currentTrack = track
 
-            }
-        )
+        loadFavoriteState(track)
+
+        track.previewUrl?.let { previewUrl ->
+            playerInteractor.preparePlayer(
+                url = previewUrl,
+                onPrepared = {
+                    updateScreenState { it.copy(playerState = PlayerState.Prepared) }
+                },
+                onCompletion = {
+                    updateScreenState {
+                        it.copy(
+                            playerState = PlayerState.Prepared,
+                            currentTime = "00:00"
+                        )
+                    }
+                    timerJob?.cancel()
+                }
+            )
+        }
     }
 
     fun playbackControl() {
@@ -67,14 +71,12 @@ class PlayerViewModel(
         playerInteractor.pausePlayer()
         updateScreenState { it.copy(playerState = PlayerState.Paused) }
         timerJob?.cancel()
-
     }
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
         updateScreenState { it.copy(playerState = PlayerState.Playing) }
         startTimer()
-
     }
 
     private fun updateScreenState(update: (PlayerScreenState) -> PlayerScreenState) {
@@ -82,19 +84,19 @@ class PlayerViewModel(
         _screenState.postValue(update(currentState))
     }
 
-    fun onFavoriteClicked(track: Track) {
-        viewModelScope.launch {
-            renderFavoriteState(favoritesInteractor.updateFavorite(track))
+    fun onFavoriteClicked() {
+        currentTrack?.let { track ->
+            viewModelScope.launch {
+                val isFavorite = favoritesInteractor.updateFavorite(track)
+                updateScreenState { it.copy(isFavorite = isFavorite) }
+            }
         }
     }
 
-    private fun renderFavoriteState(isChecked: Boolean) {
-        stateFavoriteData.postValue(isChecked)
-    }
-
-    fun getChecked(track: Track) {
+    private fun loadFavoriteState(track: Track) {
         viewModelScope.launch {
-            renderFavoriteState(favoritesInteractor.getChecked(track.trackId.toString()))
+            val isFavorite = favoritesInteractor.getChecked(track.trackId.toString())
+            updateScreenState { it.copy(isFavorite = isFavorite) }
         }
     }
 
@@ -102,7 +104,6 @@ class PlayerViewModel(
         super.onCleared()
         playerInteractor.releasePlayer()
         timerJob?.cancel()
-
     }
 
     companion object {

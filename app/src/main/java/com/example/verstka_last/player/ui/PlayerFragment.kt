@@ -25,12 +25,11 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPlayerBinding.bind(view)
-        viewModel.getChecked(track)
 
         setupUI(track)
 
         if (savedInstanceState == null) {
-            viewModel.preparePlayer(track.previewUrl)
+            viewModel.preparePlayer(track)
         }
 
         setupClickListeners()
@@ -51,18 +50,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         }
 
         binding.favourite.setOnClickListener {
-            viewModel.onFavoriteClicked(track)
+            viewModel.onFavoriteClicked()
         }
     }
 
     private fun setupObservers() {
         viewModel.screenState.observe(viewLifecycleOwner) { state ->
             render(state)
-        }
-
-        viewModel.observeFavoriteState().observe(viewLifecycleOwner) { isFavorite ->
-            updateFavoriteButton(isFavorite)
-            track.isFavorite = isFavorite
         }
     }
 
@@ -72,6 +66,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     }
 
     private fun render(state: PlayerScreenState) {
+        updateFavoriteButton(state.isFavorite)
+
         when (state.playerState) {
             PlayerState.Default -> {
                 binding.play.isVisible = true
@@ -105,6 +101,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             R.drawable.ic_button_add_favorits
         }
         binding.favourite.setImageResource(iconRes)
+        track.isFavorite = isFavorite
     }
 
     private fun setupUI(track: Track) {
@@ -122,8 +119,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.year.text = track.getReleaseYear() ?: ""
         binding.genreName.text = track.primaryGenreName
         binding.country.text = track.country
-
-        updateFavoriteButton(track.isFavorite)
 
         Glide.with(requireContext())
             .load(track.getHighResArtworkUrl())
