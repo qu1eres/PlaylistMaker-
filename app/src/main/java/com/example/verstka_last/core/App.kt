@@ -4,6 +4,7 @@
     import androidx.appcompat.app.AppCompatDelegate
     import com.example.verstka_last.di.coreModule
     import com.example.verstka_last.di.dataModule
+    import com.example.verstka_last.di.interactorModule
     import com.example.verstka_last.di.mediaLibraryModule
     import com.example.verstka_last.di.playerModule
     import com.example.verstka_last.di.repositoryModule
@@ -32,7 +33,8 @@
                     searchModule,
                     playerModule,
                     mediaLibraryModule,
-                    repositoryModule
+                    repositoryModule,
+                    interactorModule
                 ) }
                 applyTheme()
         }

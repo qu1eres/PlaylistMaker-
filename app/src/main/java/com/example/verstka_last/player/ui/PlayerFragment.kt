@@ -19,14 +19,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private val viewModel: PlayerViewModel by viewModel()
 
     private val track: Track by lazy {
-        arguments?.getSerializable("track") as? Track ?: throw IllegalArgumentException("че")
+        arguments?.getSerializable("track") as? Track ?: throw IllegalArgumentException("Трек не передан")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPlayerBinding.bind(view)
 
-        val track = track
         setupUI(track)
 
         if (savedInstanceState == null) {
@@ -49,11 +48,20 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.toolBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+
+        binding.favourite.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
+        }
     }
 
     private fun setupObservers() {
         viewModel.screenState.observe(viewLifecycleOwner) { state ->
             render(state)
+        }
+
+        viewModel.observeFavoriteState().observe(viewLifecycleOwner) { isFavorite ->
+            updateFavoriteButton(isFavorite)
+            track.isFavorite = isFavorite
         }
     }
 
@@ -89,6 +97,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.currentPlayTime.text = state.currentTime
     }
 
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        val iconRes = if (isFavorite) {
+            R.drawable.ic_favorites_button_active
+        } else {
+            R.drawable.ic_button_add_favorits
+        }
+        binding.favourite.setImageResource(iconRes)
+    }
+
     private fun setupUI(track: Track) {
         binding.trackName.text = track.title
         binding.artistName.text = track.artist
@@ -104,6 +121,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding.year.text = track.getReleaseYear() ?: ""
         binding.genreName.text = track.primaryGenreName
         binding.country.text = track.country
+
+        updateFavoriteButton(track.isFavorite)
 
         Glide.with(requireContext())
             .load(track.getHighResArtworkUrl())

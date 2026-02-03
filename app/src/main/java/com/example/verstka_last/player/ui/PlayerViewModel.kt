@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.verstka_last.core.domain.db.FavoritesInteractor
+import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.player.domain.api.PlayerInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,11 +14,13 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
-) : ViewModel() {
+    private val playerInteractor: PlayerInteractor, private val favoritesInteractor: FavoritesInteractor) : ViewModel() {
 
     private val _screenState = MutableLiveData(PlayerScreenState())
     val screenState: LiveData<PlayerScreenState> = _screenState
+
+    private val stateFavoriteData = MutableLiveData<Boolean>()
+    fun observeFavoriteState(): LiveData<Boolean> = stateFavoriteData
 
     private var timerJob: Job? = null
 
@@ -76,6 +80,16 @@ class PlayerViewModel(
     private fun updateScreenState(update: (PlayerScreenState) -> PlayerScreenState) {
         val currentState = _screenState.value ?: PlayerScreenState()
         _screenState.postValue(update(currentState))
+    }
+
+    fun onFavoriteClicked(track: Track) {
+        viewModelScope.launch {
+            renderFavoriteState(favoritesInteractor.updateFavorite(track))
+        }
+    }
+
+    private fun renderFavoriteState(isChecked: Boolean) {
+        stateFavoriteData.postValue(isChecked)
     }
 
     override fun onCleared() {
