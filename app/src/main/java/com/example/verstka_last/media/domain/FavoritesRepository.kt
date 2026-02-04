@@ -1,0 +1,11 @@
+package com.example.verstka_last.media.domain
+
+import com.example.verstka_last.core.domain.models.Track
+import kotlinx.coroutines.flow.Flow
+
+interface FavoritesRepository {
+    suspend fun insertTrack(track: Track)
+    suspend fun deleteTrack(track: Track)
+    fun getTracks(): Flow<List<Track>>
+    fun getFavoriteChecked(): Flow<List<String>>
+}

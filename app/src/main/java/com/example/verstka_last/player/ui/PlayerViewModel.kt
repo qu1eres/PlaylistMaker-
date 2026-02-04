@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.verstka_last.media.domain.FavoritesInteractor
+import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.player.domain.api.PlayerInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,12 +14,14 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor
+    private val playerInteractor: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
     private val _screenState = MutableLiveData(PlayerScreenState())
     val screenState: LiveData<PlayerScreenState> = _screenState
 
+    private var currentTrack: Track? = null
     private var timerJob: Job? = null
 
     fun startTimer() {
@@ -31,24 +35,28 @@ class PlayerViewModel(
         }
     }
 
-    fun preparePlayer(previewUrl: String?) {
-        if (previewUrl == null) return
-        playerInteractor.preparePlayer(
-            url = previewUrl,
-            onPrepared = {
-                updateScreenState { it.copy(playerState = PlayerState.Prepared) }
-            },
-            onCompletion = {
-                updateScreenState {
-                    it.copy(
-                        playerState = PlayerState.Prepared,
-                        currentTime = "00:00"
-                    )
-                }
-                timerJob?.cancel()
+    fun preparePlayer(track: Track) {
+        currentTrack = track
 
-            }
-        )
+        loadFavoriteState(track)
+
+        track.previewUrl?.let { previewUrl ->
+            playerInteractor.preparePlayer(
+                url = previewUrl,
+                onPrepared = {
+                    updateScreenState { it.copy(playerState = PlayerState.Prepared) }
+                },
+                onCompletion = {
+                    updateScreenState {
+                        it.copy(
+                            playerState = PlayerState.Prepared,
+                            currentTime = "00:00"
+                        )
+                    }
+                    timerJob?.cancel()
+                }
+            )
+        }
     }
 
     fun playbackControl() {
@@ -63,14 +71,12 @@ class PlayerViewModel(
         playerInteractor.pausePlayer()
         updateScreenState { it.copy(playerState = PlayerState.Paused) }
         timerJob?.cancel()
-
     }
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
         updateScreenState { it.copy(playerState = PlayerState.Playing) }
         startTimer()
-
     }
 
     private fun updateScreenState(update: (PlayerScreenState) -> PlayerScreenState) {
@@ -78,11 +84,26 @@ class PlayerViewModel(
         _screenState.postValue(update(currentState))
     }
 
+    fun onFavoriteClicked() {
+        currentTrack?.let { track ->
+            viewModelScope.launch {
+                val isFavorite = favoritesInteractor.updateFavorite(track)
+                updateScreenState { it.copy(isFavorite = isFavorite) }
+            }
+        }
+    }
+
+    private fun loadFavoriteState(track: Track) {
+        viewModelScope.launch {
+            val isFavorite = favoritesInteractor.getChecked(track.trackId.toString())
+            updateScreenState { it.copy(isFavorite = isFavorite) }
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         playerInteractor.releasePlayer()
         timerJob?.cancel()
-
     }
 
     companion object {

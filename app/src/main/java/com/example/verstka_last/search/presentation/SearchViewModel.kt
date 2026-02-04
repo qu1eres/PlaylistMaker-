@@ -1,7 +1,6 @@
 package com.example.verstka_last.search.presentation
 
-import android.os.Handler
-import android.os.Looper
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +10,10 @@ import com.example.verstka_last.search.domain.api.SearchHistoryInteractor
 import com.example.verstka_last.search.domain.api.TracksInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executors
 import kotlin.coroutines.cancellation.CancellationException
 
 class SearchViewModel(
@@ -29,10 +30,9 @@ class SearchViewModel(
     private val _navigationEvent = MutableLiveData<NavigationEvent?>()
     val navigationEvent: LiveData<NavigationEvent?> = _navigationEvent
 
-    private val executor = Executors.newSingleThreadExecutor()
-
     private var searchJob: Job? = null
     private var clickDebounceJob: Job? = null
+    private var historyJob: Job? = null
 
     private var isClickAllowed = true
 
@@ -61,13 +61,17 @@ class SearchViewModel(
     }
 
     fun onClearHistoryClick() {
-        searchHistoryInteractor.clearHistory()
+        viewModelScope.launch {
+            searchHistoryInteractor.clearHistory()
+        }
         showHistory()
     }
 
     fun onTrackClick(track: Track) {
         if (clickDebounce()) {
-            searchHistoryInteractor.saveTrack(track)
+            viewModelScope.launch {
+                searchHistoryInteractor.saveTrack(track)
+            }
             _navigationEvent.value = NavigationEvent.OpenPlayer(track)
         }
     }
@@ -101,6 +105,8 @@ class SearchViewModel(
     }
 
     private fun performSearch(query: String) {
+        historyJob?.cancel()
+
         _searchState.postValue(SearchState.Loading)
 
         searchJob?.cancel()
@@ -126,15 +132,23 @@ class SearchViewModel(
     }
 
     private fun showHistory() {
-        executor.execute {
-            val history = searchHistoryInteractor.loadHistory()
-            val newState = if (history.isNotEmpty()) {
-                SearchState.History(history)
-            } else {
-                SearchState.Initial
+        historyJob?.cancel()
+
+        searchJob?.cancel()
+
+        historyJob = searchHistoryInteractor.loadHistory()
+            .onEach { history ->
+                val newState = if (history.isNotEmpty()) {
+                    SearchState.History(history)
+                } else {
+                    SearchState.Initial
+                }
+                _searchState.postValue(newState)
             }
-            _searchState.postValue(newState)
-        }
+            .catch { error ->
+                _searchState.postValue(SearchState.Initial)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun clickDebounce(): Boolean {
@@ -153,7 +167,9 @@ class SearchViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        executor.shutdown()
+        searchJob?.cancel()
+        historyJob?.cancel()
+        clickDebounceJob?.cancel()
     }
 
     sealed class NavigationEvent {

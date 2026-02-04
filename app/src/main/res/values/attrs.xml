@@ -8,6 +8,7 @@
     <attr name="searchIconTint" format="color" />
     <attr name="searchButtonUpdateTint" format="color" />
     <attr name="searchButtonUpdateTextColor" format="color" />
+    <attr name="favoriteButtonColor" format="color" />
     <attr name="playButtonIcon" format="reference" />
     <attr name="playButtonActiveIcon" format="reference" />
     <attr name="favoriteButtonIcon" format="reference" />

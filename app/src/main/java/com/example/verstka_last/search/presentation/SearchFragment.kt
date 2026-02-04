@@ -135,7 +135,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         val bundle = Bundle().apply {
             putSerializable("track", track)
         }
-        findNavController().navigate(R.id.action_searchFragment_to_playerFragment3, bundle)
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
     private fun hideKeyboard(view: View) {
