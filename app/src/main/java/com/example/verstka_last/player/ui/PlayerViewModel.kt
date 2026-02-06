@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.verstka_last.media.domain.FavoritesInteractor
+import com.example.verstka_last.media.domain.favorites.FavoritesInteractor
 import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.player.domain.api.PlayerInteractor
 import kotlinx.coroutines.Job

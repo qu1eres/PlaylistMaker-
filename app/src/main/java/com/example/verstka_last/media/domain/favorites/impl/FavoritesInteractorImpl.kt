@@ -1,8 +1,8 @@
-package com.example.verstka_last.media.domain.impl
+package com.example.verstka_last.media.domain.favorites.impl
 
 import com.example.verstka_last.core.domain.models.Track
-import com.example.verstka_last.media.domain.FavoritesInteractor
-import com.example.verstka_last.media.domain.FavoritesRepository
+import com.example.verstka_last.media.domain.favorites.FavoritesInteractor
+import com.example.verstka_last.media.domain.favorites.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 
 class FavoritesInteractorImpl(private val favoritesRepository: FavoritesRepository) :

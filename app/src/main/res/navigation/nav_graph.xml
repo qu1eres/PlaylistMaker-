@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_playlistCreatorFragment"
+            app:destination="@id/playlistCreatorFragment" />
     </fragment>
 
     <fragment
@@ -40,4 +43,8 @@
             android:name="track"
             app:argType="com.example.verstka_last.core.domain.models.Track" />
     </fragment>
+    <fragment
+        android:id="@+id/playlistCreatorFragment"
+        android:name="com.example.verstka_last.playlist_create.presentation.fragment.PlaylistCreatorFragment"
+        android:label="PlaylistCreatorFragment" />
 </navigation>

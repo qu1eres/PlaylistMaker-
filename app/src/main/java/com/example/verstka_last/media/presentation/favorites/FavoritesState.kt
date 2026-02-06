@@ -1,4 +1,4 @@
-package com.example.verstka_last.media.presentation
+package com.example.verstka_last.media.presentation.favorites
 
 import com.example.verstka_last.core.domain.models.Track
 

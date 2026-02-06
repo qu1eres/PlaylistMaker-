@@ -1,12 +1,12 @@
-package com.example.verstka_last.media.presentation.viewmodel
+package com.example.verstka_last.media.presentation.favorites.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.verstka_last.media.domain.FavoritesInteractor
 import com.example.verstka_last.core.domain.models.Track
-import com.example.verstka_last.media.presentation.FavoriteState
+import com.example.verstka_last.media.domain.favorites.FavoritesInteractor
+import com.example.verstka_last.media.presentation.favorites.FavoriteState
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(

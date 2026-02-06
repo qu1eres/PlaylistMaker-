@@ -2,6 +2,7 @@ package com.example.verstka_last.core.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.verstka_last.core.data.db.dao.PlaylistDao
 import com.example.verstka_last.core.data.db.dao.TrackDao
 import com.example.verstka_last.core.data.db.entity.TrackEntity
 
@@ -9,5 +10,7 @@ import com.example.verstka_last.core.data.db.entity.TrackEntity
 abstract class AppDatabase : RoomDatabase(){
 
     abstract fun trackDao(): TrackDao
+
+    abstract fun playlistDao(): PlaylistDao
 
 }

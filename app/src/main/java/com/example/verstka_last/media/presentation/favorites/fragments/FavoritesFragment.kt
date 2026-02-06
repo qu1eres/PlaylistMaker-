@@ -1,17 +1,17 @@
-package com.example.verstka_last.media.presentation.fragments
+package com.example.verstka_last.media.presentation.favorites.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.verstka_last.R
 import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.databinding.FragmentFavoritesBinding
-import com.example.verstka_last.media.presentation.FavoriteState
-import com.example.verstka_last.media.presentation.viewmodel.FavoritesViewModel
+import com.example.verstka_last.media.presentation.favorites.FavoriteState
+import com.example.verstka_last.media.presentation.favorites.viewmodel.FavoritesViewModel
 import com.example.verstka_last.search.presentation.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import androidx.navigation.findNavController
 
 class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 

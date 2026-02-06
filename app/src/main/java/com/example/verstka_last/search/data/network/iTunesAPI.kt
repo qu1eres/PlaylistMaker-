@@ -1,7 +1,6 @@
 package com.example.verstka_last.search.data.network
 
 import com.example.verstka_last.search.data.dto.ITunesSearchResponse
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 

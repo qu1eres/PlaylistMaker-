@@ -1,10 +1,10 @@
-package com.example.verstka_last.media.data
+package com.example.verstka_last.media.data.favorites
 
 import com.example.verstka_last.core.data.converters.TrackDbConverter
 import com.example.verstka_last.core.data.db.AppDatabase
 import com.example.verstka_last.core.data.db.entity.TrackEntity
-import com.example.verstka_last.media.domain.FavoritesRepository
 import com.example.verstka_last.core.domain.models.Track
+import com.example.verstka_last.media.domain.favorites.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
