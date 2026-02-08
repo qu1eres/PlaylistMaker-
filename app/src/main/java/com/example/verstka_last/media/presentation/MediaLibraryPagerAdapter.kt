@@ -2,8 +2,8 @@ package com.example.verstka_last.media.presentation
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.verstka_last.media.presentation.fragments.FavoritesFragment
-import com.example.verstka_last.media.presentation.fragments.PlaylistsFragment
+import com.example.verstka_last.media.presentation.favorites.fragments.FavoritesFragment
+import com.example.verstka_last.media.presentation.playlist.fragments.PlaylistsFragment
 
 class MediaLibraryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 

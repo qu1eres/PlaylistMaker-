@@ -4,25 +4,76 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.verstka_last.media.domain.FavoritesInteractor
+import com.example.verstka_last.core.domain.models.Playlist
+import com.example.verstka_last.media.domain.favorites.FavoritesInteractor
 import com.example.verstka_last.core.domain.models.Track
+import com.example.verstka_last.media.domain.playlist.PlaylistInteractor
 import com.example.verstka_last.player.domain.api.PlayerInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val _screenState = MutableLiveData(PlayerScreenState())
     val screenState: LiveData<PlayerScreenState> = _screenState
 
+    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+    val playlists: StateFlow<List<Playlist>> = _playlists
+
+    private val _playlistActionResult = MutableLiveData<PlaylistActionResult?>()
+    val playlistActionResult: LiveData<PlaylistActionResult?> = _playlistActionResult
+
     private var currentTrack: Track? = null
     private var timerJob: Job? = null
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlistsList ->
+                _playlists.value = playlistsList
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            currentTrack?.let { track ->
+                val isAdded = playlistInteractor.addTrack(track, playlist)
+                if (isAdded) {
+                    val currentList = _playlists.value
+                    val index = currentList.indexOfFirst { it.id == playlist.id }
+                    if (index != -1) {
+                        val actualPlaylist = currentList[index]
+                        val updatedPlaylist = actualPlaylist.copy(trackCount = actualPlaylist.trackCount + 1)
+
+                        val newList = currentList.toMutableList()
+                        newList[index] = updatedPlaylist
+                        _playlists.value = newList
+                    }
+
+                    _playlistActionResult.postValue(PlaylistActionResult.Added(playlist.title))
+                } else {
+                    _playlistActionResult.postValue(PlaylistActionResult.AlreadyExists(playlist.title))
+                }
+            }
+        }
+    }
+
+    fun setPlaylistCreated() {
+        _playlistActionResult.postValue(PlaylistActionResult.Created)
+    }
+
+    fun clearPlaylistActionResult() {
+        _playlistActionResult.postValue(null)
+    }
 
     fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -109,4 +160,10 @@ class PlayerViewModel(
     companion object {
         private const val DELAY_MILLIS = 300L
     }
+}
+
+sealed class PlaylistActionResult {
+    data class Added(val playlistName: String) : PlaylistActionResult()
+    data class AlreadyExists(val playlistName: String) : PlaylistActionResult()
+    object Created : PlaylistActionResult()
 }
