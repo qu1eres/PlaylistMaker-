@@ -1,7 +1,5 @@
 package com.example.verstka_last.media.presentation.playlist
 
-import android.annotation.SuppressLint
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -27,25 +25,14 @@ class PlaylistViewHolder(private val binding: PlaylistItemBinding, private val f
         binding.playlistTracksCount.text = addText
 
         val file = File(filePath, "${item.id}.jpg")
-
-        if (file.exists()) {
-            Glide.with(itemView)
-                .load(file.toUri().toString())
-                .placeholder(R.drawable.ic_placeholder)
-                .transform(
-                    CenterCrop(),
-                    RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius))
-                )
-                .into(binding.playlistImage)
-        } else {
-            Glide.with(itemView)
-                .load(R.drawable.ic_placeholder)
-                .transform(
-                    CenterCrop(),
-                    RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius))
-                )
-                .into(binding.playlistImage)
-        }
+        Glide.with(itemView)
+            .load(file.toUri().toString())
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder) // Показывать заглушку при ошибке
+            .transform(
+                CenterCrop(),
+                RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)))
+            .into(binding.playlistImage)
         itemView.setOnClickListener {
             onClick(item)
         }
