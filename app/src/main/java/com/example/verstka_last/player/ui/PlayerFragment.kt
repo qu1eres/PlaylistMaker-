@@ -159,7 +159,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private fun showPlaylistsBottomSheet() {
         if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
 
