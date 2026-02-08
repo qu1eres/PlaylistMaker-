@@ -165,6 +165,12 @@ class PlaylistCreatorFragment : Fragment() {
                         when (state) {
                             is PlaylistCreationState.Success -> {
                                 showSuccessToast(state.playlistId)
+                                parentFragmentManager.setFragmentResult(
+                                    "playlist_created",
+                                    Bundle().apply {
+                                        putLong("playlist_id", state.playlistId)
+                                    }
+                                )
                                 findNavController().navigateUp()
                             }
                             else -> Unit
