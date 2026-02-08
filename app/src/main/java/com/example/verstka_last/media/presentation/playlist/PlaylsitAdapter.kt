@@ -14,16 +14,11 @@ import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.databinding.PlaylistItemBinding
 import java.io.File
 
-class PlaylistViewHolder(
-    private val binding: PlaylistItemBinding,
-    private val filePath: File,
-    private val onClick: (Playlist) -> Unit
-) : RecyclerView.ViewHolder(binding.root) {
-
-    @SuppressLint("SetTextI18n")
+class PlaylistViewHolder(private val binding: PlaylistItemBinding, private val filePath: File, private val onClick: (Playlist) -> Unit) :
+    RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Playlist) {
-        binding.playlistName.text = item.title
 
+        binding.playlistName.text = item.title
         val addText = itemView.resources.getQuantityString(
             R.plurals.countOfTracks,
             item.trackCount.toInt(),
@@ -32,6 +27,7 @@ class PlaylistViewHolder(
         binding.playlistTracksCount.text = addText
 
         val file = File(filePath, "${item.id}.jpg")
+
         if (file.exists()) {
             Glide.with(itemView)
                 .load(file.toUri().toString())

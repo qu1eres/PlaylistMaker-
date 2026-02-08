@@ -47,6 +47,7 @@
     <string name="back_alert_message">Все несохраненные данные будут потеряны</string>
     <string name="negative_button">Отмена</string>
     <string name="positive_button">Завершить</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
     <plurals name="countOfTracks">
         <item quantity="zero">%1$d треков</item>
         <item quantity="one">%1$d трек</item>
@@ -55,4 +56,8 @@
         <item quantity="many">%1$d треков</item>
         <item quantity="other">%1$d трекoв</item>
     </plurals>
+
+    <string name="added_to_playlist">Добавлено в плейлист \"%s\"</string>
+    <string name="already_in_playlist">Трек уже добавлен в плейлист \"%s\"</string>
+    <string name="playlist_added_success">Плейлист создан.</string>
 </resources>
