@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -34,8 +35,6 @@ class PlaylistCreatorFragment : Fragment() {
     private val viewModel: PlaylistCreatorViewModel by viewModel()
 
     private lateinit var imagesDir: File
-    private var nameTextWatcher: android.text.TextWatcher? = null
-    private var descriptionTextWatcher: android.text.TextWatcher? = null
 
     private val pickMedia = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -76,25 +75,14 @@ class PlaylistCreatorFragment : Fragment() {
     }
 
     private fun setupTextWatchers() {
-        nameTextWatcher = object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.setPlaylistName(s?.toString() ?: "")
-                binding.createButton.isEnabled = !s.isNullOrEmpty()
-            }
-            override fun afterTextChanged(s: android.text.Editable?) {}
+        binding.nameET.doOnTextChanged { text, _, _, _ ->
+            viewModel.setPlaylistName(text?.toString() ?: "")
+            binding.createButton.isEnabled = !text.isNullOrBlank()
         }
 
-        descriptionTextWatcher = object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.setDescription(s?.toString() ?: "")
-            }
-            override fun afterTextChanged(s: android.text.Editable?) {}
+        binding.descriptionET.doOnTextChanged { text, _, _, _ ->
+            viewModel.setDescription(text?.toString() ?: "")
         }
-
-        nameTextWatcher?.let { binding.nameET.addTextChangedListener(it) }
-        descriptionTextWatcher?.let { binding.descriptionET.addTextChangedListener(it) }
     }
 
     private fun setupButtonListeners() {
@@ -197,8 +185,6 @@ class PlaylistCreatorFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        nameTextWatcher?.let { binding.nameET.removeTextChangedListener(it) }
-        descriptionTextWatcher?.let { binding.descriptionET.removeTextChangedListener(it) }
         _binding = null
     }
 }
