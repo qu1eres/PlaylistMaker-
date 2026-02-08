@@ -47,12 +47,22 @@ class PlayerViewModel(
         viewModelScope.launch {
             currentTrack?.let { track ->
                 val isAdded = playlistInteractor.addTrack(track, playlist)
-                val actionResult = if (isAdded) {
-                    PlaylistActionResult.Added(playlist.title)
+                if (isAdded) {
+                    val currentList = _playlists.value
+                    val index = currentList.indexOfFirst { it.id == playlist.id }
+                    if (index != -1) {
+                        val actualPlaylist = currentList[index]
+                        val updatedPlaylist = actualPlaylist.copy(trackCount = actualPlaylist.trackCount + 1)
+
+                        val newList = currentList.toMutableList()
+                        newList[index] = updatedPlaylist
+                        _playlists.value = newList
+                    }
+
+                    _playlistActionResult.postValue(PlaylistActionResult.Added(playlist.title))
                 } else {
-                    PlaylistActionResult.AlreadyExists(playlist.title)
+                    _playlistActionResult.postValue(PlaylistActionResult.AlreadyExists(playlist.title))
                 }
-                _playlistActionResult.postValue(actionResult)
             }
         }
     }

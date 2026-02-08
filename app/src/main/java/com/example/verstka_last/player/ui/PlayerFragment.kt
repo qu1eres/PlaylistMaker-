@@ -143,6 +143,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     is PlaylistActionResult.Added -> {
                         showToast(getString(R.string.added_to_playlist, it.playlistName))
                         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        viewModel.loadPlaylists()
                     }
                     is PlaylistActionResult.AlreadyExists -> {
                         showToast(getString(R.string.already_in_playlist, it.playlistName))
@@ -169,7 +170,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             "playlist_created",
             viewLifecycleOwner
         ) { _, _ ->
-            viewModel.loadPlaylists()
+
             viewModel.setPlaylistCreated()
         }
 
