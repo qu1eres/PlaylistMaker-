@@ -20,5 +20,5 @@ interface PlaylistDao {
     suspend fun getPlaylists(): List<PlaylistEntity>
 
     @Query("SELECT tracks FROM playlist_table WHERE playlist_id = :playListId" )
-    suspend fun getTrackList(playListId: Long): List<String>
+    suspend fun getTrackList(playListId: Long): List<String?>
 }

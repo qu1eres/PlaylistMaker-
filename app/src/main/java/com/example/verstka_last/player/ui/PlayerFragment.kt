@@ -55,7 +55,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
             bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    // Проверяем, что binding не null
                     _binding?.let { binding ->
                         when (newState) {
                             BottomSheetBehavior.STATE_HIDDEN -> {
@@ -69,7 +68,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    // Проверяем, что binding не null
                     _binding?.let { binding ->
                         val alpha = when {
                             slideOffset < 0 -> 0f
@@ -94,7 +92,6 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private fun setupPlaylistsRecyclerView() {
         playlistsAdapter = MiniPlayListAdapter { playlist ->
             viewModel.addTrackToPlaylist(playlist)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         binding.playlistsRecyclerView.apply {
@@ -145,6 +142,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 when (it) {
                     is PlaylistActionResult.Added -> {
                         showToast(getString(R.string.added_to_playlist, it.playlistName))
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
                     is PlaylistActionResult.AlreadyExists -> {
                         showToast(getString(R.string.already_in_playlist, it.playlistName))

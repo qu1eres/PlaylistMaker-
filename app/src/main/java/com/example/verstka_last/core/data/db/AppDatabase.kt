@@ -3,19 +3,14 @@ package com.example.verstka_last.core.data.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.verstka_last.core.data.db.dao.PlaylistDao
-import com.example.verstka_last.core.data.db.dao.PlaylistTrackDao
 import com.example.verstka_last.core.data.db.dao.TrackDao
 import com.example.verstka_last.core.data.db.entity.PlaylistEntity
-import com.example.verstka_last.core.data.db.entity.PlaylistTrackEntity
 import com.example.verstka_last.core.data.db.entity.TrackEntity
 
-@Database(version = 3, entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackEntity::class], exportSchema = false)
+@Database(version = 3, entities = [TrackEntity::class, PlaylistEntity::class], exportSchema = false)
 abstract class AppDatabase : RoomDatabase(){
 
     abstract fun trackDao(): TrackDao
 
     abstract fun playlistDao(): PlaylistDao
-
-    abstract fun playlistTrackDao(): PlaylistTrackDao
-
 }
