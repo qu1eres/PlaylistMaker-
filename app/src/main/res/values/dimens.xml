@@ -18,6 +18,7 @@
     <dimen name="info_layout_margin_bottom">6dp</dimen>
     <dimen name="divider_padding_horizontal">5dp</dimen>
     <dimen name="arrow_icon_margin_start">8dp</dimen>
+    <dimen name="corner_radius">8dp</dimen>
 
     <dimen name="track_name_padding_end">40dp</dimen>
     <dimen name="info_layout_padding_end">40dp</dimen>

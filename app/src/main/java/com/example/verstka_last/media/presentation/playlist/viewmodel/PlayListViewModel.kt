@@ -10,7 +10,4 @@ class PlaylistsViewModel : ViewModel() {
 
     private val _navigationEvent = MutableLiveData<NavigationEvent?>()
     val navigationEvent: LiveData<NavigationEvent?> = _navigationEvent
-
-
-
 }

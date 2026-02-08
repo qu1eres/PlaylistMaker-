@@ -11,5 +11,5 @@ val mediaLibraryModule = module {
     viewModel { MediaLibraryViewModel() }
     viewModel { PlaylistsViewModel() }
     viewModel { FavoritesViewModel(get()) }
-    viewModel { PlaylistCreatorViewModel() }
+    viewModel { PlaylistCreatorViewModel(get()) }
 }
