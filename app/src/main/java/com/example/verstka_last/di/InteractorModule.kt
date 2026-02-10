@@ -4,6 +4,8 @@ import com.example.verstka_last.media.domain.favorites.FavoritesInteractor
 import com.example.verstka_last.media.domain.favorites.impl.FavoritesInteractorImpl
 import com.example.verstka_last.media.domain.playlist.PlaylistInteractor
 import com.example.verstka_last.media.domain.playlist.impl.PlaylistInteractorImpl
+import com.example.verstka_last.playlist.domain.PlayListRedactInteractor
+import com.example.verstka_last.playlist.domain.impl.PlaylistRedactInteractorImpl
 import com.example.verstka_last.playlist_create.domain.PlaylistCreatorInteractor
 import com.example.verstka_last.playlist_create.domain.impl.PlaylistCreatorInteractorImpl
 import org.koin.dsl.module
@@ -18,4 +20,8 @@ val interactorModule = module {
     single<PlaylistCreatorInteractor> {
         PlaylistCreatorInteractorImpl(get(), get())
     }
+    single<PlayListRedactInteractor> {
+        PlaylistRedactInteractorImpl(get())
+    }
+
 }

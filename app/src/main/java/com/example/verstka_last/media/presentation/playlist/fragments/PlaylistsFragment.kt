@@ -5,7 +5,6 @@ import android.os.Environment
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.verstka_last.R
@@ -41,7 +40,9 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     }
 
     private fun setupRecyclerView() {
-        adapter = PlayListAdapter(imagesDir) { playlist -> }
+        adapter = PlayListAdapter(imagesDir) { playlist ->
+            navigateToPlaylistRedact(playlist.id)
+        }
 
         binding.playlistRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistRecyclerView.adapter = adapter
@@ -87,6 +88,16 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
 
     private fun openPlaylistCreator() {
         findNavController().navigate(R.id.action_libraryFragment_to_playlistCreatorFragment)
+    }
+
+    private fun navigateToPlaylistRedact(playlistId: Long) {
+        val bundle = Bundle().apply {
+            putLong("playlist_id", playlistId)
+        }
+        findNavController().navigate(
+            R.id.action_libraryFragment_to_playlistRedactFragment,
+            bundle
+        )
     }
 
     override fun onResume() {

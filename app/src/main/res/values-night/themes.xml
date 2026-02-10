@@ -17,6 +17,7 @@
         <item name="playButtonActiveIcon">@drawable/ic_active_play_button_night</item>
         <item name="favoriteButtonIcon">@drawable/ic_button_add_favourits_night</item>
         <item name="playlistButtonIcon">@drawable/ic_button_add_to_playlist_night</item>
+        <item name="playlistBottomSheetR">@color/white</item>
     </style>
     <style name="Theme.Verstka_last.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/black</item>

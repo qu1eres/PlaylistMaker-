@@ -34,7 +34,11 @@
     <string name="new_playlist">Новый плейлист</string>
     <string name="tracks_message">Ваша медиатека пуста</string>
     <string name="medialibrary">Медиатека</string>
+    <string name="delete_track">Хотите удалить трек?</string>
+    <string name="empty_playlist">В этом плейлисте нет ни одного трека</string>
     <string name="playlists">Плейлисты</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
     <string name="favorites">Избранные треки</string>
     <string name="search_bottom_button">Поиск</string>
     <string name="library_bottom_button">Медиатека</string>
@@ -60,4 +64,17 @@
     <string name="added_to_playlist">Добавлено в плейлист \"%s\"</string>
     <string name="already_in_playlist">Трек уже добавлен в плейлист \"%s\"</string>
     <string name="playlist_added_success">Плейлист создан.</string>
+    <string name="track_title">Title</string>
+    <string name="playlist_sharing">Поделиться</string>
+    <string name="playlist_redact">Редактировать информацию</string>
+    <string name="playlist_delete">Удалить плейлист</string>
+
+    <plurals name="minutes">
+        <item quantity="zero">%1$d минут</item>
+        <item quantity="one">%1$d минута</item>
+        <item quantity="two">%1$d минуты</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минут</item>
+    </plurals>
 </resources>

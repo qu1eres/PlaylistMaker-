@@ -12,30 +12,47 @@ import kotlinx.coroutines.flow.flow
 
 class PlaylistRepositoryImpl(private val appDatabase: AppDatabase, private val playlistDbConverter: PlaylistDbConverter, private val jsonMapper: JsonMapper) :
     PlaylistRepository {
-    override fun getPlaylists(): Flow<List<Playlist>> = flow {
-        emit(convertFromPlaylistEntity(appDatabase.playlistDao().getPlaylists()))
+
+    override fun getPlaylists(): Flow<List<Playlist>> = flow { emit(convertFromEntity(appDatabase.playlistDao().getPlaylists())) }
+    override suspend fun updatePlayList(playList: Playlist) { appDatabase.playlistDao().updatePlaylist(convertToEntity(playList)) }
+    override suspend fun delete(playlist: Playlist) { appDatabase.playlistDao().delete(convertToEntity(playlist)) }
+    override suspend fun getTrackList(playlistId: Long): List<Track> { return jsonMapper.convertToList(appDatabase.playlistDao().getTrackList(playlistId).first()) }
+
+    override fun getPlaylist(playListId: Long): Flow<Playlist> = flow {
+        val playList = appDatabase.playlistDao().getPlayList(playListId).first()
+        emit(convertFromPlaylistEntity(playList))
     }
 
     override suspend fun addPlaylist(playlist: Playlist): Long {
-        return appDatabase.playlistDao().insertPlaylist(convertFromPlaylist(playlist))
+        return appDatabase.playlistDao().insertPlaylist(convertToEntity(playlist))
     }
 
     override suspend fun addTrack(track: Track, playlist: Playlist) {
         ++playlist.trackCount
-        playlist.tracks = jsonMapper.setTrack(track, playlist.tracks)
-        val playlistEntity = convertFromPlaylist(playlist)
-        appDatabase.playlistDao().updatePlaylist(playlistEntity)
+        playlist.tracks.add(track)
+        val playListEntity = convertToEntity(playlist)
+        appDatabase.playlistDao().updatePlaylist(playListEntity)
     }
 
-    override suspend fun getTrackList(playlist: Playlist): List<Track> {
-        val tracks = appDatabase.playlistDao().getTrackList(playlist.id).first()
-        return jsonMapper.convertToList(tracks)
+    override suspend fun removeTrack(track: Track, playList: Playlist) {
+        --playList.trackCount
+        playList.tracks.remove(track)
+        val playListEntity = convertToEntity(playList)
+        appDatabase.playlistDao().updatePlaylist(playListEntity)
     }
 
-    private fun convertFromPlaylistEntity(playlist: List<PlaylistEntity>): List<Playlist> {
-        return playlist.map { playlist -> playlistDbConverter.map(playlist) }
+    private fun convertFromPlaylistEntity(playList: PlaylistEntity): Playlist {
+        val tracks = jsonMapper.convertToList(playList.tracks)
+        return playlistDbConverter.map(playList,tracks)
     }
-    private fun convertFromPlaylist(playlist: Playlist): PlaylistEntity {
-        return playlistDbConverter.map(playlist)
+    private fun convertFromEntity(playLists: List<PlaylistEntity>): List<Playlist> {
+        return playLists.map { playList ->
+            val tracks = jsonMapper.convertToList(playList.tracks)
+            playlistDbConverter.map(playList, tracks)
+        }
+    }
+    private fun convertToEntity(playList: Playlist): PlaylistEntity {
+        val tracks = jsonMapper.convertFromList(playList.tracks)
+        return playlistDbConverter.map(playList, tracks)
     }
 }

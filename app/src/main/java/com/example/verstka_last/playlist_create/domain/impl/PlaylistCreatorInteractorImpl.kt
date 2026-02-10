@@ -10,7 +10,7 @@ import java.io.File
 class PlaylistCreatorInteractorImpl(private val repository: PlaylistRepository, private val fileRepository: FileStorageRepository) :
     PlaylistCreatorInteractor {
     override suspend fun savePlaylist(playlistName: String, description: String, fileDir: String): Long {
-        val playlist = Playlist(0, playlistName, description, fileDir, 0, null)
+        val playlist = Playlist(0, playlistName, description, fileDir, 0, mutableListOf())
         return repository.addPlaylist(playlist)
     }
 

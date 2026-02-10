@@ -26,6 +26,7 @@
         <item name="playButtonActiveIcon">@drawable/ic_active_play_button</item>
         <item name="favoriteButtonIcon">@drawable/ic_button_add_favorits</item>
         <item name="playlistButtonIcon">@drawable/ic_button_add_to_playlist</item>
+        <item name="playlistBottomSheetR">@color/yp_light_gray</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>
