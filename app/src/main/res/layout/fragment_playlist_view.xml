@@ -160,7 +160,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/playlist_bottom_r"
-        app:behavior_peekHeight="383dp"
+        app:behavior_peekHeight="382dp"
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">

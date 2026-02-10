@@ -81,7 +81,6 @@ class PlaylistRedactFragment : Fragment() {
         menuBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
             isHideable = true
-            peekHeight = 0
 
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -100,16 +99,7 @@ class PlaylistRedactFragment : Fragment() {
                     }
                 }
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    _binding?.let { binding ->
-                        val alpha = when {
-                            slideOffset < 0 -> 0f
-                            slideOffset > 1 -> 1f
-                            else -> slideOffset
-                        }
-                        binding.overlay.alpha = alpha
-                    }
-                }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
             })
         }
 
