@@ -1,6 +1,7 @@
 package com.example.verstka_last.playlist.ui.fragment
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
@@ -15,17 +16,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.verstka_last.R
 import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.databinding.FragmentPlaylistViewBinding
 import com.example.verstka_last.playlist.ui.TracksInPlayListAdapter
 import com.example.verstka_last.playlist.ui.viewmodel.PlaylistRedactViewModel
+import com.example.verstka_last.sharing.ui.SharingViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
@@ -34,6 +36,7 @@ class PlaylistRedactFragment : Fragment() {
     private var _binding: FragmentPlaylistViewBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PlaylistRedactViewModel by viewModel()
+    private val sharingViewModel: SharingViewModel by viewModel()
     private lateinit var imagesDir: File
     private lateinit var tracksAdapter: TracksInPlayListAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -130,16 +133,16 @@ class PlaylistRedactFragment : Fragment() {
         }
 
         binding.shareButton.setOnClickListener {
-            viewModel.playlist.value?.let { playlist ->
-                if (playlist.trackCount > 0) {
-                } else {
-                    showEmptyPlaylistSharingMessage()
-                }
-            }
+            handleShareClick()
+        }
+
+        binding.shareTextMenu.setOnClickListener {
+            handleShareClick()
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         binding.updateTextMenu.setOnClickListener {
-            // Редактирование пока не реализовано
+
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
@@ -152,6 +155,18 @@ class PlaylistRedactFragment : Fragment() {
             showPlaylistMenu()
         }
     }
+
+    private fun handleShareClick() {
+        val playlist = viewModel.playlist.value
+        val tracks = viewModel.tracks.value
+
+        if (playlist != null && tracks.isNotEmpty()) {
+            sharingViewModel.onSharePlaylistClicked(playlist, tracks)
+        } else {
+            showEmptyPlaylistSharingMessage()
+        }
+    }
+
     private fun showPlaylistMenu() {
         menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         binding.overlay.isVisible = true
@@ -188,6 +203,34 @@ class PlaylistRedactFragment : Fragment() {
                 binding.trackCount.text = count
             }
         }
+
+        lifecycleScope.launch {
+            sharingViewModel.playlistSharingEvent.observe(viewLifecycleOwner) { event ->
+                event?.let {
+                    when (it) {
+                        is SharingViewModel.PlaylistSharingEvent.SharePlaylist -> {
+                            sharePlaylistText(it.shareText)
+                            sharingViewModel.onPlaylistSharingEventHandled()
+                        }
+                        is SharingViewModel.PlaylistSharingEvent.EmptyPlaylistError -> {
+                            showEmptyPlaylistSharingMessage()
+                            sharingViewModel.onPlaylistSharingEventHandled()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun sharePlaylistText(text: String) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+
+        val chooserIntent = Intent.createChooser(shareIntent, getString(R.string.playlist_sharing))
+        startActivity(chooserIntent)
     }
 
     private fun updatePlaylistUI(playlist: Playlist) {

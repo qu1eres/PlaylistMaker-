@@ -5,14 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.playlist.domain.PlayListRedactInteractor
-import com.example.verstka_last.sharing.domain.api.SharingInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistRedactViewModel(
     private val interactor: PlayListRedactInteractor,
-    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
 
     private val _playlist = MutableStateFlow<Playlist?>(null)
@@ -56,12 +54,6 @@ class PlaylistRedactViewModel(
             1 -> "1 трек"
             in 2..4 -> "$count трека"
             else -> "$count треков"
-        }
-    }
-
-    fun sharePlayList(playlist: Playlist) {
-        viewModelScope.launch {
-            sharingInteractor.sharePlaylist(playlist)
         }
     }
 
