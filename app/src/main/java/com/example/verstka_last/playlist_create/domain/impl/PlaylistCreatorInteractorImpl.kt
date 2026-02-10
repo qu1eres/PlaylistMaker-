@@ -18,4 +18,14 @@ class PlaylistCreatorInteractorImpl(private val repository: PlaylistRepository, 
         fileRepository.saveImage(filePath,savePlaylist, uri)
     }
 
+    override suspend fun updatePlaylist(playlist: Playlist, newImageUri: Uri?, imagesDir: File?
+    ) {
+        repository.updatePlayList(playlist)
+
+        newImageUri?.let { uri ->
+            imagesDir?.let { dir ->
+                saveImage(dir, playlist.id.toString(), uri)
+            }
+        }
+    }
 }

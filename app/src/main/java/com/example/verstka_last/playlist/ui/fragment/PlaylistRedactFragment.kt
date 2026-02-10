@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.verstka_last.R
 import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.core.domain.models.Track
@@ -142,8 +143,17 @@ class PlaylistRedactFragment : Fragment() {
         }
 
         binding.updateTextMenu.setOnClickListener {
-
             menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            val playlist = viewModel.playlist.value
+            playlist?.let {
+                val bundle = Bundle().apply {
+                    putSerializable("playlist", it)
+                }
+                findNavController().navigate(
+                    R.id.action_playlistRedactFragment_to_playlistEditorFragment,
+                    bundle
+                )
+            }
         }
 
         binding.deleteTextMenu.setOnClickListener {
@@ -263,7 +273,7 @@ class PlaylistRedactFragment : Fragment() {
             .load(coverFile)
             .placeholder(R.drawable.ic_placeholder)
             .error(R.drawable.ic_placeholder)
-            .transform(CenterCrop())
+            .transform(CenterCrop(), RoundedCorners(8))
             .into(binding.item.playlistImage)
     }
 
@@ -306,7 +316,7 @@ class PlaylistRedactFragment : Fragment() {
         typedArray.recycle()
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.playlist_delete_message)
+            .setTitle(getString(R.string.playlist_delete_message, viewModel.playlist.value?.title))
             .setNegativeButton(R.string.no, null)
             .setPositiveButton(R.string.yes) { _, _ ->
                 viewModel.playlist.value?.let { playlist ->

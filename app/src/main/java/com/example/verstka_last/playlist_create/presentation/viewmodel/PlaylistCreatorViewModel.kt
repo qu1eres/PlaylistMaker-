@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 
-class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor) : ViewModel() {
+open class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor) : ViewModel() {
 
     private val _playlistName = MutableStateFlow("")
     private val _description = MutableStateFlow("")
@@ -17,20 +17,20 @@ class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor
     val selectedImage: StateFlow<Uri?> = _selectedImageUri.asStateFlow()
     private val _hasUnsavedChanges = MutableStateFlow(false)
     val hasUnsavedChanges: StateFlow<Boolean> = _hasUnsavedChanges.asStateFlow()
-    private val _creationState = MutableStateFlow<PlaylistCreationState>(PlaylistCreationState.Idle)
+    val _creationState = MutableStateFlow<PlaylistCreationState>(PlaylistCreationState.Idle)
     val creationState: StateFlow<PlaylistCreationState> = _creationState.asStateFlow()
 
-    fun setPlaylistName(name: String) {
+    open fun setPlaylistName(name: String) {
         _playlistName.value = name
         updateHasUnsavedChanges()
     }
 
-    fun setDescription(description: String) {
+    open fun setDescription(description: String) {
         _description.value = description
         updateHasUnsavedChanges()
     }
 
-    fun setSelectedImageUri(uri: Uri?) {
+    open fun setSelectedImageUri(uri: Uri?) {
         _selectedImageUri.value = uri
         if (uri != null) {
             updateHasUnsavedChanges()
@@ -38,6 +38,7 @@ class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor
     }
 
     fun getPlaylistName(): String = _playlistName.value
+    fun getDescription(): String = _description.value
 
     private fun updateHasUnsavedChanges() {
         _hasUnsavedChanges.value = _playlistName.value.isNotBlank() ||
@@ -45,7 +46,7 @@ class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor
                 _selectedImageUri.value != null
     }
 
-    suspend fun createPlaylist(imagesDir: File? = null): Long {
+    open suspend fun createPlaylist(imagesDir: File? = null): Long {
         val playlistId = interactor.savePlaylist(
             playlistName = _playlistName.value,
             description = _description.value,

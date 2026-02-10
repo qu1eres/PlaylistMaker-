@@ -14,7 +14,7 @@ class FileStorage(private val context: Context) {
         }
         val file = File(filePath, "${fileName}.jpg")
         BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri)).compress(
-            Bitmap.CompressFormat.JPEG, 30,
+            Bitmap.CompressFormat.JPEG, 90,
             FileOutputStream(file)
         )
     }
