@@ -60,5 +60,12 @@
         <action
             android:id="@+id/action_playlistRedactFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_playlistRedactFragment_to_playlistEditorFragment"
+            app:destination="@id/playlistEditorFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/playlistEditorFragment"
+        android:name="com.example.verstka_last.playlist.ui.fragment.PlaylistEditorFragment"
+        android:label="PlaylistEditorFragment" />
 </navigation>

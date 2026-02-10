@@ -1,5 +1,7 @@
 package com.example.verstka_last.core.domain.models
 
+import java.io.Serializable
+
 data class Playlist(
     var id: Long,
     var title: String,
@@ -7,4 +9,4 @@ data class Playlist(
     val imagePath: String,
     var trackCount: Long,
     var tracks: MutableList<Track>
-)
+) : Serializable

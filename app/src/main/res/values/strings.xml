@@ -69,6 +69,8 @@
     <string name="playlist_redact">Редактировать информацию</string>
     <string name="playlist_delete_message">Хотите удалить плейлист «%s»?</string>
     <string name="playlist_delete">Удалить плейлист</string>
+    <string name="playlist_save">Сохранить</string>
+    <string name="edit_playlist">Редактировать информацию</string>
     <string name="playlist_empty_sharing">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
     <plurals name="minutes">
