@@ -148,10 +148,16 @@
             tools:listitem="@layout/track_item" />
     </LinearLayout>
 
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/playlistBottomSheet"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="match_parent"
         android:background="@drawable/playlist_bottom_r"
         app:behavior_peekHeight="383dp"

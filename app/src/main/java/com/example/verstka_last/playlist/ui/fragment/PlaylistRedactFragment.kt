@@ -24,6 +24,7 @@ import com.example.verstka_last.playlist.ui.TracksInPlayListAdapter
 import com.example.verstka_last.playlist.ui.viewmodel.PlaylistRedactViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -36,6 +37,7 @@ class PlaylistRedactFragment : Fragment() {
     private lateinit var imagesDir: File
     private lateinit var tracksAdapter: TracksInPlayListAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var playlistId: Long = -1
 
     override fun onCreateView(
@@ -73,6 +75,46 @@ class PlaylistRedactFragment : Fragment() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.tracksBottomSheet).apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
             peekHeight = resources.displayMetrics.heightPixels / 4
+            isHideable = false
+        }
+
+        menuBottomSheetBehavior = BottomSheetBehavior.from(binding.playlistBottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+            isHideable = true
+            peekHeight = 0
+
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    _binding?.let { binding ->
+                        when (newState) {
+                            BottomSheetBehavior.STATE_HIDDEN -> {
+                                binding.overlay.visibility = View.GONE
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                            }
+                            BottomSheetBehavior.STATE_COLLAPSED,
+                            BottomSheetBehavior.STATE_EXPANDED -> {
+                                binding.overlay.visibility = View.VISIBLE
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    _binding?.let { binding ->
+                        val alpha = when {
+                            slideOffset < 0 -> 0f
+                            slideOffset > 1 -> 1f
+                            else -> slideOffset
+                        }
+                        binding.overlay.alpha = alpha
+                    }
+                }
+            })
+        }
+
+        binding.overlay.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
@@ -98,12 +140,38 @@ class PlaylistRedactFragment : Fragment() {
         }
 
         binding.shareButton.setOnClickListener {
+            viewModel.playlist.value?.let { playlist ->
+                if (playlist.trackCount > 0) {
+                } else {
+                    showEmptyPlaylistSharingMessage()
+                }
+            }
+        }
 
+        binding.updateTextMenu.setOnClickListener {
+            // Редактирование пока не реализовано
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.deleteTextMenu.setOnClickListener {
+            menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            showDeletePlaylistDialog()
         }
 
         binding.menuButton.setOnClickListener {
-
+            showPlaylistMenu()
         }
+    }
+    private fun showPlaylistMenu() {
+        menuBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        binding.overlay.isVisible = true
+    }
+    private fun showEmptyPlaylistSharingMessage() {
+        Snackbar.make(
+            binding.root,
+            getString(R.string.playlist_empty_sharing),
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 
     private fun setupObservers() {
@@ -142,17 +210,28 @@ class PlaylistRedactFragment : Fragment() {
             timeText, timeText
         )
 
+        binding.item.playlistName.text = playlist.title
+        val countText = requireActivity().resources.getQuantityString(
+            R.plurals.countOfTracks,
+            playlist.trackCount.toInt(),
+            playlist.trackCount
+        )
+        binding.item.tracksCount.text = countText
+
         val coverFile = File(imagesDir, "${playlist.id}.jpg")
-        if (coverFile.exists()) {
-            Glide.with(requireContext())
-                .load(coverFile)
-                .placeholder(R.drawable.ic_placeholder)
-                .transform(
-                    CenterCrop())
-                .into(binding.cover)
-        } else {
-            binding.cover.setImageResource(R.drawable.ic_placeholder)
-        }
+        Glide.with(requireContext())
+            .load(coverFile)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
+            .transform(
+                CenterCrop())
+            .into(binding.cover)
+        Glide.with(requireContext())
+            .load(coverFile)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
+            .transform(CenterCrop())
+            .into(binding.item.playlistImage)
     }
 
     private fun updateTracksUI(tracks: List<Track>) {
@@ -178,6 +257,29 @@ class PlaylistRedactFragment : Fragment() {
             .setNegativeButton(R.string.no, null)
             .setPositiveButton(R.string.yes) { _, _ ->
                 viewModel.removeTrack(track)
+            }
+            .create()
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(buttonColor)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(buttonColor)
+    }
+
+    private fun showDeletePlaylistDialog() {
+        val typedArray = requireContext().theme.obtainStyledAttributes(
+            intArrayOf(R.attr.settingsTextColor)
+        )
+        val buttonColor = typedArray.getColor(0, Color.BLACK)
+        typedArray.recycle()
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.playlist_delete_message)
+            .setNegativeButton(R.string.no, null)
+            .setPositiveButton(R.string.yes) { _, _ ->
+                viewModel.playlist.value?.let { playlist ->
+                    viewModel.deletePlayList(playlist)
+                    findNavController().popBackStack()
+                }
             }
             .create()
         dialog.show()
