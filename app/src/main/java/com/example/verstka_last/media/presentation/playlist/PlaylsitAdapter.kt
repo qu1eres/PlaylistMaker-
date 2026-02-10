@@ -28,7 +28,7 @@ class PlaylistViewHolder(private val binding: PlaylistItemBinding, private val f
         Glide.with(itemView)
             .load(file.toUri().toString())
             .placeholder(R.drawable.ic_placeholder)
-            .error(R.drawable.ic_placeholder) // Показывать заглушку при ошибке
+            .error(R.drawable.ic_placeholder)
             .transform(
                 CenterCrop(),
                 RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)))
