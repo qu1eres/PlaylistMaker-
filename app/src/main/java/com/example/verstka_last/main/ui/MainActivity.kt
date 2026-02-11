@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.playerFragment -> hideBottomNavigation()
                 R.id.playlistCreatorFragment -> hideBottomNavigation()
+                R.id.playlistEditorFragment -> hideBottomNavigation()
+                R.id.playlistRedactFragment -> hideBottomNavigation()
                 else -> showBottomNavigation()
             }
         }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistRedactViewModel(
-    private val interactor: PlayListRedactInteractor,
+    private val interactor: PlayListRedactInteractor
 ) : ViewModel() {
 
     private val _playlist = MutableStateFlow<Playlist?>(null)
@@ -22,9 +22,6 @@ class PlaylistRedactViewModel(
     private val _totalDuration = MutableStateFlow("")
     val totalDuration: StateFlow<String> = _totalDuration
 
-    private val _trackCount = MutableStateFlow("0 треков")
-    val trackCount: StateFlow<String> = _trackCount
-
     private var currentPlaylistId: Long = -1
 
     fun initPlaylist(playlistId: Long) {
@@ -32,7 +29,6 @@ class PlaylistRedactViewModel(
         viewModelScope.launch {
             interactor.getPlayList(playlistId).collect { playlist ->
                 _playlist.value = playlist
-                updateTrackCount(playlist.trackCount)
                 loadTracks(playlist)
             }
         }
@@ -40,27 +36,15 @@ class PlaylistRedactViewModel(
 
     private suspend fun loadTracks(playlist: Playlist) {
         interactor.getTracks(playlist).collect { tracksList ->
-            _tracks.value = tracksList
+            _tracks.value = tracksList.reversed()
         }
     }
 
-    fun getPlaylistTime(tracks: List<Track>): Int {
-        return interactor.getPlayListTime(tracks)
-    }
-
-    private fun updateTrackCount(count: Long) {
-        _trackCount.value = when (count.toInt()) {
-            0 -> "Нет треков"
-            1 -> "1 трек"
-            in 2..4 -> "$count трека"
-            else -> "$count треков"
-        }
-    }
+    fun getPlaylistTime(tracks: List<Track>): Int =
+        interactor.getPlayListTime(tracks)
 
     fun deletePlayList(playlist: Playlist) {
-        viewModelScope.launch {
-            interactor.delete(playlist)
-        }
+        viewModelScope.launch { interactor.delete(playlist) }
     }
 
     fun removeTrack(track: Track) {

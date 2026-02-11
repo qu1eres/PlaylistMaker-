@@ -2,6 +2,7 @@ package com.example.verstka_last.playlist_create.presentation.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.playlist_create.domain.PlaylistCreatorInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ open class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInter
     val selectedImage: StateFlow<Uri?> = _selectedImageUri.asStateFlow()
     private val _hasUnsavedChanges = MutableStateFlow(false)
     val hasUnsavedChanges: StateFlow<Boolean> = _hasUnsavedChanges.asStateFlow()
-    val _creationState = MutableStateFlow<PlaylistCreationState>(PlaylistCreationState.Idle)
+    private val _creationState = MutableStateFlow<PlaylistCreationState>(PlaylistCreationState.Idle)
     val creationState: StateFlow<PlaylistCreationState> = _creationState.asStateFlow()
 
     open fun setPlaylistName(name: String) {
@@ -32,9 +33,7 @@ open class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInter
 
     open fun setSelectedImageUri(uri: Uri?) {
         _selectedImageUri.value = uri
-        if (uri != null) {
-            updateHasUnsavedChanges()
-        }
+        updateHasUnsavedChanges()
     }
 
     fun getPlaylistName(): String = _playlistName.value
@@ -53,15 +52,29 @@ open class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInter
             fileDir = ""
         )
 
+        if (playlistId == -1L) return -1L
+
         _selectedImageUri.value?.let { uri ->
             imagesDir?.let { dir ->
-                interactor.saveImage(
+                val savedPath = interactor.saveImage(
                     filePath = dir,
                     savePlaylist = playlistId.toString(),
                     uri = uri
                 )
+                if (savedPath != null) {
+                    val updatedPlaylist = Playlist(
+                        id = playlistId,
+                        title = _playlistName.value,
+                        description = _description.value,
+                        imagePath = savedPath,
+                        trackCount = 0,
+                        tracks = mutableListOf()
+                    )
+                    interactor.updatePlaylist(updatedPlaylist, newImageUri = null, imagesDir = dir)
+                }
             }
         }
+
         _creationState.value = PlaylistCreationState.Success(playlistId)
         return playlistId
     }

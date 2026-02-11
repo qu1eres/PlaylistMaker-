@@ -5,7 +5,8 @@ import com.example.verstka_last.core.domain.models.Playlist
 import java.io.File
 
 interface PlaylistCreatorInteractor {
-    fun saveImage(filePath: File, savePlaylist: String, uri: Uri)
+    suspend fun saveImage(filePath: File, savePlaylist: String, uri: Uri): String?
     suspend fun savePlaylist(playlistName: String, description: String, fileDir: String): Long
-    suspend fun updatePlaylist(playlist: Playlist, newImageUri: Uri? = null, imagesDir: File? = null)
+    suspend fun updatePlaylist(playlist: Playlist, newImageUri: Uri?, imagesDir: File): Boolean
+    suspend fun getPlaylist(id: Long): Playlist
 }

@@ -42,7 +42,6 @@ class PlaylistRedactFragment : Fragment() {
     private lateinit var tracksAdapter: TracksInPlayListAdapter
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private var playlistId: Long = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +60,7 @@ class PlaylistRedactFragment : Fragment() {
             "playlist_covers"
         )
 
-        playlistId = arguments?.getLong("playlist_id", -1) ?: -1
+        val playlistId = arguments?.getLong("playlist_id", -1) ?: -1
         if (playlistId == -1L) {
             findNavController().popBackStack()
             return
@@ -147,7 +146,7 @@ class PlaylistRedactFragment : Fragment() {
             val playlist = viewModel.playlist.value
             playlist?.let {
                 val bundle = Bundle().apply {
-                    putSerializable("playlist", it)
+                    putLong("playlistId", it.id)
                 }
                 findNavController().navigate(
                     R.id.action_playlistRedactFragment_to_playlistEditorFragment,
@@ -208,12 +207,6 @@ class PlaylistRedactFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.trackCount.collectLatest { count ->
-                binding.trackCount.text = count
-            }
-        }
-
         lifecycleScope.launch {
             sharingViewModel.playlistSharingEvent.observe(viewLifecycleOwner) { event ->
                 event?.let {
@@ -252,7 +245,12 @@ class PlaylistRedactFragment : Fragment() {
             R.plurals.minutes,
             timeText, timeText
         )
-
+        val trackCountText = resources.getQuantityString(
+            R.plurals.countOfTracks,
+            playlist.trackCount.toInt(),
+            playlist.trackCount
+        )
+        binding.trackCount.text = trackCountText
         binding.item.playlistName.text = playlist.title
         val countText = requireActivity().resources.getQuantityString(
             R.plurals.countOfTracks,
@@ -261,14 +259,15 @@ class PlaylistRedactFragment : Fragment() {
         )
         binding.item.tracksCount.text = countText
 
-        val coverFile = File(imagesDir, "${playlist.id}.jpg")
+        val coverFile = playlist.imagePath.takeIf { it.isNotBlank() }?.let { File(it) }
+
         Glide.with(requireContext())
             .load(coverFile)
             .placeholder(R.drawable.ic_placeholder)
             .error(R.drawable.ic_placeholder)
-            .transform(
-                CenterCrop())
+            .transform(CenterCrop())
             .into(binding.cover)
+
         Glide.with(requireContext())
             .load(coverFile)
             .placeholder(R.drawable.ic_placeholder)

@@ -4,5 +4,5 @@ import android.net.Uri
 import java.io.File
 
 interface FileStorageRepository {
-    fun saveImage(filePath: File, savePlaylist: String, uri: Uri)
+    suspend fun saveImage(targetDir: File, fileName: String, uri: Uri): String?
 }

@@ -1,11 +1,10 @@
 package com.example.verstka_last.playlist.ui.fragment
 
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,33 +12,33 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.verstka_last.R
-import com.example.verstka_last.core.domain.models.Playlist
+import com.example.verstka_last.playlist.ui.viewmodel.PlaylistEditorUiState
 import com.example.verstka_last.playlist.ui.viewmodel.PlaylistEditorViewModel
 import com.example.verstka_last.playlist_create.presentation.fragment.PlaylistCreatorFragment
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
+import org.koin.core.parameter.parametersOf
 
 class PlaylistEditorFragment : PlaylistCreatorFragment() {
 
-    private val editViewModel: PlaylistEditorViewModel by viewModel()
-    private var currentPlaylist: Playlist? = null
+    private val editViewModel: PlaylistEditorViewModel by viewModel {
+        parametersOf(requireArguments().getLong("playlistId"))
+    }
+
+    private val pickImageLauncher = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri -> uri?.let { editViewModel.setSelectedImageUri(it) } }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        currentPlaylist = arguments?.getSerializable("playlist") as? Playlist
-        if (currentPlaylist == null) {
-            findNavController().popBackStack()
-            return
-        }
+        super.onViewCreated(view, savedInstanceState)
 
-        editViewModel.initEditMode(currentPlaylist!!)
+        val playlistId = requireArguments().getLong("playlistId")
+        editViewModel.initEditMode(playlistId, imagesDir)
 
-        imagesDir = File(
-            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "playlist_covers"
-        )
+        binding.backButton.findViewById<android.widget.TextView>(R.id.playlist_main).text = getString(R.string.edit_playlist)
+        binding.createButton.text = getString(R.string.playlist_save)
 
-        setupUI()
         setupImagePicker()
         setupTextWatchers()
         setupButtonListeners()
@@ -47,34 +46,16 @@ class PlaylistEditorFragment : PlaylistCreatorFragment() {
         observeViewModel()
     }
 
-    private fun setupUI() {
-        binding.backButton.findViewById<TextView>(R.id.playlist_main).text = getString(R.string.edit_playlist)
-        binding.createButton.text = getString(R.string.playlist_save)
-
-        val coverFile = File(imagesDir, "${currentPlaylist!!.id}.jpg")
-        if (coverFile.exists()) {
-            Glide.with(requireContext())
-                .load(coverFile)
-                .centerCrop()
-                .placeholder(R.drawable.ic_placeholder)
-                .transform(
-                    CenterCrop(), RoundedCorners(resources.getDimensionPixelSize(R.dimen.corner_radius))
-                )
-                .into(binding.playListImage)
+    override fun setupImagePicker() {
+        binding.playListImage.setOnClickListener {
+            pickImageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-
-        binding.nameET.setText(currentPlaylist!!.title)
-        binding.descriptionET.setText(currentPlaylist!!.description)
-        binding.createButton.isEnabled = currentPlaylist!!.title.isNotBlank()
     }
 
     override fun setupTextWatchers() {
         binding.nameET.doOnTextChanged { text, _, _, _ ->
-            val name = text?.toString() ?: ""
-            editViewModel.setPlaylistName(name)
-            binding.createButton.isEnabled = name.isNotBlank()
+            editViewModel.setPlaylistName(text?.toString() ?: "")
         }
-
         binding.descriptionET.doOnTextChanged { text, _, _, _ ->
             editViewModel.setDescription(text?.toString() ?: "")
         }
@@ -83,18 +64,8 @@ class PlaylistEditorFragment : PlaylistCreatorFragment() {
     override fun setupButtonListeners() {
         binding.createButton.setOnClickListener {
             lifecycleScope.launch {
-                try {
-                    val playlistId = editViewModel.createPlaylist(imagesDir)
-                    if (playlistId != -1L) {
-                        findNavController().popBackStack()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Ошибка: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                editViewModel.createPlaylist(imagesDir)
+                findNavController().popBackStack()
             }
         }
 
@@ -104,21 +75,44 @@ class PlaylistEditorFragment : PlaylistCreatorFragment() {
     }
 
     override fun setupBackPressHandler() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    findNavController().navigateUp()
-                }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (editViewModel.hasUnsavedChanges.value) {
+                showBackConfirmationDialog()
+            } else {
+                findNavController().navigateUp()
             }
-        )
+        }
     }
 
     override fun observeViewModel() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            editViewModel.selectedImage.collect { uri ->
-                uri?.let { loadImageWithGlide(it.toString()) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            editViewModel.uiState.collectLatest { state ->
+                renderUiState(state)
             }
+        }
+    }
+
+    private fun renderUiState(state: PlaylistEditorUiState) {
+        if (binding.nameET.text.toString() != state.playlistName) {
+            binding.nameET.setText(state.playlistName)
+        }
+        if (binding.descriptionET.text.toString() != state.playlistDescription) {
+            binding.descriptionET.setText(state.playlistDescription)
+        }
+
+        binding.createButton.isEnabled = state.isSaveButtonEnabled
+
+        if (state.coverUri != null) {
+            Glide.with(requireContext())
+                .load(state.coverUri)
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(resources.getDimensionPixelSize(R.dimen.corner_radius))
+                )
+                .placeholder(R.drawable.ic_placeholder)
+                .into(binding.playListImage)
+        } else {
+            binding.playListImage.setImageResource(R.drawable.ic_placeholder)
         }
     }
 }

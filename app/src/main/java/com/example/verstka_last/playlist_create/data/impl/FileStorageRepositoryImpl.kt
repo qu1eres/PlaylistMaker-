@@ -5,7 +5,8 @@ import com.example.verstka_last.playlist_create.data.FileStorage
 import com.example.verstka_last.playlist_create.domain.FileStorageRepository
 import java.io.File
 
-class FileStorageRepositoryImpl(private val storage: FileStorage): FileStorageRepository {
-    override fun saveImage(filePath: File, savePlaylist: String, uri: Uri) {
-        storage.saveImageToPrivateStorage(filePath,savePlaylist,uri)    }
+class FileStorageRepositoryImpl(private val storage: FileStorage) : FileStorageRepository {
+    override suspend fun saveImage(targetDir: File, fileName: String, uri: Uri): String? {
+        return storage.saveImageToPrivateStorage(targetDir, fileName, uri)
+    }
 }

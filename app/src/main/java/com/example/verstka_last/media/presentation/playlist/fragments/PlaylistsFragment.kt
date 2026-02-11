@@ -40,7 +40,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     }
 
     private fun setupRecyclerView() {
-        adapter = PlayListAdapter(imagesDir) { playlist ->
+        adapter = PlayListAdapter { playlist ->
             navigateToPlaylistRedact(playlist.id)
         }
 

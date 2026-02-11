@@ -69,7 +69,7 @@ open class PlaylistCreatorFragment : Fragment() {
         observeViewModel()
     }
 
-    fun setupImagePicker() {
+    open fun setupImagePicker() {
         binding.playListImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -117,7 +117,7 @@ open class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    private fun showBackConfirmationDialog() {
+    fun showBackConfirmationDialog() {
         // Я не знаю, как я ещё должен был изменить цвет конкретно этих кнопок. К сожалению у меня цветовые приколы в приложении
         // сложились так, что обыденные методы не доступны и для их использования пришлось бы полностью менять всю логику подбора
         // цветов для всего в приложении. Я это делать не собираюсь, так что пусть будет так.
@@ -148,24 +148,15 @@ open class PlaylistCreatorFragment : Fragment() {
                         uri?.let { loadImageWithGlide(it.toString()) }
                     }
                 }
-
                 launch {
                     viewModel.creationState.collect { state ->
-                        when (state) {
-                            is PlaylistCreationState.Success -> {
-                                if (this@PlaylistCreatorFragment is PlaylistEditorFragment) {
-                                    return@collect
-                                }
-                                showSuccessToast(state.playlistId)
-                                parentFragmentManager.setFragmentResult(
-                                    "playlist_created",
-                                    Bundle().apply {
-                                        putLong("playlist_id", state.playlistId)
-                                    }
-                                )
-                                findNavController().navigateUp()
-                            }
-                            else -> Unit
+                        if (state is PlaylistCreationState.Success && this@PlaylistCreatorFragment !is PlaylistEditorFragment) {
+                            showSuccessToast(state.playlistId)
+                            parentFragmentManager.setFragmentResult(
+                                "playlist_created",
+                                Bundle().apply { putLong("playlist_id", state.playlistId) }
+                            )
+                            findNavController().navigateUp()
                         }
                     }
                 }
@@ -173,7 +164,7 @@ open class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    fun loadImageWithGlide(imageUri: String) {
+    open fun loadImageWithGlide(imageUri: String) {
         Glide.with(this)
             .load(imageUri)
             .centerCrop()

@@ -8,7 +8,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 class FileStorage(private val context: Context) {
-    fun saveImageToPrivateStorage(filePath: File, fileName: String, uri: Uri) {
+    fun saveImageToPrivateStorage(filePath: File, fileName: String, uri: Uri): String? {
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
@@ -17,5 +17,6 @@ class FileStorage(private val context: Context) {
             Bitmap.CompressFormat.JPEG, 90,
             FileOutputStream(file)
         )
+        return file.toString()
     }
 }
