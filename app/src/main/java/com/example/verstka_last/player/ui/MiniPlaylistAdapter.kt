@@ -58,7 +58,7 @@ class MiniPlayListViewHolder(
             .error(R.drawable.ic_placeholder)
             .transform(
                 CenterCrop(),
-                RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius))
+                RoundedCorners(12)
             )
             .into(binding.playlistImage)
     }
