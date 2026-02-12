@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_playlistCreatorFragment"
             app:destination="@id/playlistCreatorFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_playlistRedactFragment"
+            app:destination="@id/playlistRedactFragment" />
     </fragment>
 
     <fragment
@@ -50,4 +53,22 @@
         android:id="@+id/playlistCreatorFragment"
         android:name="com.example.verstka_last.playlist_create.presentation.fragment.PlaylistCreatorFragment"
         android:label="PlaylistCreatorFragment" />
+    <fragment
+        android:id="@+id/playlistRedactFragment"
+        android:name="com.example.verstka_last.playlist.ui.fragment.PlaylistRedactFragment"
+        android:label="PlaylistRedactFragment" >
+        <action
+            android:id="@+id/action_playlistRedactFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_playlistRedactFragment_to_playlistEditorFragment"
+            app:destination="@id/playlistEditorFragment">
+            <argument
+                android:name="playlistId"
+                app:argType="long" /></action>
+    </fragment>
+    <fragment
+        android:id="@+id/playlistEditorFragment"
+        android:name="com.example.verstka_last.playlist.ui.fragment.PlaylistEditorFragment"
+        android:label="PlaylistEditorFragment" />
 </navigation>

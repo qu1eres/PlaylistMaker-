@@ -2,13 +2,14 @@ package com.example.verstka_last.playlist_create.presentation.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.playlist_create.domain.PlaylistCreatorInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
 
-class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor) : ViewModel() {
+open class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor) : ViewModel() {
 
     private val _playlistName = MutableStateFlow("")
     private val _description = MutableStateFlow("")
@@ -20,24 +21,23 @@ class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor
     private val _creationState = MutableStateFlow<PlaylistCreationState>(PlaylistCreationState.Idle)
     val creationState: StateFlow<PlaylistCreationState> = _creationState.asStateFlow()
 
-    fun setPlaylistName(name: String) {
+    open fun setPlaylistName(name: String) {
         _playlistName.value = name
         updateHasUnsavedChanges()
     }
 
-    fun setDescription(description: String) {
+    open fun setDescription(description: String) {
         _description.value = description
         updateHasUnsavedChanges()
     }
 
-    fun setSelectedImageUri(uri: Uri?) {
+    open fun setSelectedImageUri(uri: Uri?) {
         _selectedImageUri.value = uri
-        if (uri != null) {
-            updateHasUnsavedChanges()
-        }
+        updateHasUnsavedChanges()
     }
 
     fun getPlaylistName(): String = _playlistName.value
+    fun getDescription(): String = _description.value
 
     private fun updateHasUnsavedChanges() {
         _hasUnsavedChanges.value = _playlistName.value.isNotBlank() ||
@@ -45,22 +45,36 @@ class PlaylistCreatorViewModel(private val interactor: PlaylistCreatorInteractor
                 _selectedImageUri.value != null
     }
 
-    suspend fun createPlaylist(imagesDir: File? = null): Long {
+    open suspend fun createPlaylist(imagesDir: File? = null): Long {
         val playlistId = interactor.savePlaylist(
             playlistName = _playlistName.value,
             description = _description.value,
             fileDir = ""
         )
 
+        if (playlistId == -1L) return -1L
+
         _selectedImageUri.value?.let { uri ->
             imagesDir?.let { dir ->
-                interactor.saveImage(
+                val savedPath = interactor.saveImage(
                     filePath = dir,
                     savePlaylist = playlistId.toString(),
                     uri = uri
                 )
+                if (savedPath != null) {
+                    val updatedPlaylist = Playlist(
+                        id = playlistId,
+                        title = _playlistName.value,
+                        description = _description.value,
+                        imagePath = savedPath,
+                        trackCount = 0,
+                        tracks = mutableListOf()
+                    )
+                    interactor.updatePlaylist(updatedPlaylist, newImageUri = null, imagesDir = dir)
+                }
             }
         }
+
         _creationState.value = PlaylistCreationState.Success(playlistId)
         return playlistId
     }

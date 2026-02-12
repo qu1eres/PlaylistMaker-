@@ -1,6 +1,7 @@
 package com.example.verstka_last.core.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,4 +22,10 @@ interface PlaylistDao {
 
     @Query("SELECT tracks FROM playlist_table WHERE playlist_id = :playListId" )
     suspend fun getTrackList(playListId: Long): List<String?>
+
+    @Query("SELECT * FROM playlist_table WHERE playlist_id = :playListId")
+    suspend fun getPlayList(playListId: Long): List<PlaylistEntity>
+
+    @Delete(entity = PlaylistEntity::class)
+    suspend fun delete(playlist: PlaylistEntity)
 }

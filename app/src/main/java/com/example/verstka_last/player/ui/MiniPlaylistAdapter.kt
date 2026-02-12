@@ -1,17 +1,15 @@
 package com.example.verstka_last.player.ui
 
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.verstka_last.R
 import com.example.verstka_last.core.domain.models.Playlist
 import com.example.verstka_last.databinding.PlaylistItemMiniBinding
 import java.io.File
-import com.example.verstka_last.R
 
 class MiniPlayListAdapter(
     private val clickListener: (Playlist) -> Unit
@@ -25,52 +23,43 @@ class MiniPlayListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MiniPlayListViewHolder {
-        val filePath = File(
-            parent.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "playlist_covers"
-        )
-        val layoutInspector = LayoutInflater.from(parent.context)
-        return MiniPlayListViewHolder(
-            PlaylistItemMiniBinding.inflate(layoutInspector, parent, false),
-            filePath
-        )
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = PlaylistItemMiniBinding.inflate(inflater, parent, false)
+        return MiniPlayListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MiniPlayListViewHolder, position: Int) {
         holder.bind(playlists[position])
-        holder.itemView.setOnClickListener {
-            clickListener.invoke(playlists[position])
-        }
+        holder.itemView.setOnClickListener { clickListener.invoke(playlists[position]) }
     }
 
     override fun getItemCount(): Int = playlists.size
 }
 
 class MiniPlayListViewHolder(
-    private val binding: PlaylistItemMiniBinding,
-    private val filePath: File
+    private val binding: PlaylistItemMiniBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Playlist) {
         binding.playlistName.text = item.title
-        val addedText = itemView.resources.getQuantityString(
+
+        val tracksCountText = itemView.resources.getQuantityString(
             R.plurals.countOfTracks,
             item.trackCount.toInt(),
-            item.trackCount.toInt()
+            item.trackCount
         )
-        binding.tracksCount.text = addedText
+        binding.tracksCount.text = tracksCountText
 
-        val file = File(filePath, "${item.id}.jpg")
-        if (file.exists()) {
-            Glide.with(itemView)
-                .load(file.toUri().toString())
-                .placeholder(R.drawable.ic_placeholder)
-                .transform(
-                    CenterCrop(),
-                    RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_radius)))
-                .into(binding.playlistImage)
-        } else {
-            binding.playlistImage.setImageResource(R.drawable.ic_placeholder)
-        }
+        val coverFile = item.imagePath.takeIf { it.isNotBlank() }?.let { File(it) }
+
+        Glide.with(itemView)
+            .load(coverFile)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
+            .transform(
+                CenterCrop(),
+                RoundedCorners(12)
+            )
+            .into(binding.playlistImage)
     }
 }

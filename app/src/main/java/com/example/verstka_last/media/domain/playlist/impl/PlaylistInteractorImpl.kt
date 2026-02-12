@@ -13,7 +13,7 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
     }
 
     override suspend fun addTrack(track: Track, playlist: Playlist): Boolean {
-        val trackList = playlistRepository.getTrackList(playlist)
+        val trackList = playlistRepository.getTrackList(playlist.id)
         return if (!trackList.contains(track)) {
             playlistRepository.addTrack(track, playlist)
             true

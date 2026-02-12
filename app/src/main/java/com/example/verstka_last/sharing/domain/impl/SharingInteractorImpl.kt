@@ -1,5 +1,7 @@
 package com.example.verstka_last.sharing.domain.impl
 
+import com.example.verstka_last.core.domain.models.Playlist
+import com.example.verstka_last.core.domain.models.Track
 import com.example.verstka_last.sharing.domain.api.AgreementData
 import com.example.verstka_last.sharing.domain.api.ShareData
 import com.example.verstka_last.sharing.domain.api.SharingInteractor
@@ -21,4 +23,7 @@ class SharingInteractorImpl(
     override fun getAgreementData(): AgreementData {
         return sharingRepository.getAgreementData()
     }
+
+    override fun getPlaylistShareText(playlist: Playlist, tracks: List<Track>) =
+        sharingRepository.getPlaylistShareText(playlist, tracks)
 }

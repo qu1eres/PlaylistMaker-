@@ -21,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.verstka_last.R
 import com.example.verstka_last.databinding.FragmentPlaylistCreateBinding
+import com.example.verstka_last.playlist.ui.fragment.PlaylistEditorFragment
 import com.example.verstka_last.playlist_create.presentation.viewmodel.PlaylistCreationState
 import com.example.verstka_last.playlist_create.presentation.viewmodel.PlaylistCreatorViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,13 +29,13 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-class PlaylistCreatorFragment : Fragment() {
+open class PlaylistCreatorFragment : Fragment() {
 
     private var _binding: FragmentPlaylistCreateBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
     private val viewModel: PlaylistCreatorViewModel by viewModel()
 
-    private lateinit var imagesDir: File
+    lateinit var imagesDir: File
 
     private val pickMedia = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -68,13 +69,13 @@ class PlaylistCreatorFragment : Fragment() {
         observeViewModel()
     }
 
-    private fun setupImagePicker() {
+    open fun setupImagePicker() {
         binding.playListImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
 
-    private fun setupTextWatchers() {
+    open fun setupTextWatchers() {
         binding.nameET.doOnTextChanged { text, _, _, _ ->
             viewModel.setPlaylistName(text?.toString() ?: "")
             binding.createButton.isEnabled = !text.isNullOrBlank()
@@ -85,7 +86,7 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    private fun setupButtonListeners() {
+    open fun setupButtonListeners() {
         binding.createButton.setOnClickListener {
             lifecycleScope.launch {
                 viewModel.createPlaylist(imagesDir)
@@ -97,7 +98,7 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    private fun setupBackPressHandler() {
+    open fun setupBackPressHandler() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -116,7 +117,7 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    private fun showBackConfirmationDialog() {
+    fun showBackConfirmationDialog() {
         // Я не знаю, как я ещё должен был изменить цвет конкретно этих кнопок. К сожалению у меня цветовые приколы в приложении
         // сложились так, что обыденные методы не доступны и для их использования пришлось бы полностью менять всю логику подбора
         // цветов для всего в приложении. Я это делать не собираюсь, так что пусть будет так.
@@ -139,7 +140,7 @@ class PlaylistCreatorFragment : Fragment() {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(buttonColor)
     }
 
-    private fun observeViewModel() {
+    open fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -147,21 +148,15 @@ class PlaylistCreatorFragment : Fragment() {
                         uri?.let { loadImageWithGlide(it.toString()) }
                     }
                 }
-
                 launch {
                     viewModel.creationState.collect { state ->
-                        when (state) {
-                            is PlaylistCreationState.Success -> {
-                                showSuccessToast(state.playlistId)
-                                parentFragmentManager.setFragmentResult(
-                                    "playlist_created",
-                                    Bundle().apply {
-                                        putLong("playlist_id", state.playlistId)
-                                    }
-                                )
-                                findNavController().navigateUp()
-                            }
-                            else -> Unit
+                        if (state is PlaylistCreationState.Success && this@PlaylistCreatorFragment !is PlaylistEditorFragment) {
+                            showSuccessToast(state.playlistId)
+                            parentFragmentManager.setFragmentResult(
+                                "playlist_created",
+                                Bundle().apply { putLong("playlist_id", state.playlistId) }
+                            )
+                            findNavController().navigateUp()
                         }
                     }
                 }
@@ -169,7 +164,7 @@ class PlaylistCreatorFragment : Fragment() {
         }
     }
 
-    private fun loadImageWithGlide(imageUri: String) {
+    open fun loadImageWithGlide(imageUri: String) {
         Glide.with(this)
             .load(imageUri)
             .centerCrop()

@@ -1,10 +1,12 @@
 package com.example.verstka_last.core.domain.models
 
+import java.io.Serializable
+
 data class Playlist(
     var id: Long,
-    val title: String,
-    val description: String,
+    var title: String,
+    var description: String,
     val imagePath: String,
     var trackCount: Long,
-    var tracks: String?
-)
+    var tracks: MutableList<Track>
+) : Serializable

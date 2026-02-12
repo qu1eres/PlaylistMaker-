@@ -8,14 +8,15 @@ import java.io.File
 import java.io.FileOutputStream
 
 class FileStorage(private val context: Context) {
-    fun saveImageToPrivateStorage(filePath: File, fileName: String, uri: Uri) {
+    fun saveImageToPrivateStorage(filePath: File, fileName: String, uri: Uri): String? {
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
         val file = File(filePath, "${fileName}.jpg")
         BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri)).compress(
-            Bitmap.CompressFormat.JPEG, 30,
+            Bitmap.CompressFormat.JPEG, 90,
             FileOutputStream(file)
         )
+        return file.toString()
     }
 }

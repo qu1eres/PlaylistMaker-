@@ -13,4 +13,5 @@
     <attr name="playButtonActiveIcon" format="reference" />
     <attr name="favoriteButtonIcon" format="reference" />
     <attr name="playlistButtonIcon" format="reference" />
+    <attr name="playlistBottomSheetR" format="reference" />
 </resources>
